@@ -8,7 +8,7 @@ No = 0;
 
 
 def apnd(ntext):
-    global value, No
+    global value, No,list_rows
     if "dBm" in ntext and "Network" in ntext:
         num = re.findall("Network 'lte': '(.*) dBm", ntext)
         fnum = [float(n) for n in num]  # floatに
