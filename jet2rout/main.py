@@ -5,9 +5,9 @@ import re
 
 # ----------------------------------------------------------
 IP_ADDRESS = '192.168.1.1'
-USER_NAME = 'root'
+USER_NAME = 'admin'
 PWD = "admin"
-CMD = 'qmicli -d /dev/cdc-wdm1 --nas-get-signal-strength'
+CMD = 'sudo -S qmicli -d /dev/cdc-wdm1 --nas-get-signal-strength'
 # ----------------------------------------------------------
 
 gps_socket = gps3.GPSDSocket()
@@ -30,23 +30,23 @@ def ssh():
     global IP_ADDRESS, USER_NAME, PWD, CMD
     client = paramiko.SSHClient()
     client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
-    client.set_missing_host_key_policy(paramiko.WarningPolicy())
     client.connect(IP_ADDRESS,
                    username=USER_NAME,
                    password=PWD,
-                   timeout=5.0)
+                   timeout=10.0)
 
     stdin, stdout, stderr = client.exec_command(CMD)
+
+    stdin.write('admin\n')
+    stdin.flush()
 
     cmd_result = ''
     for line in stdout:
         cmd_result += line
 
-    print(cmd_result)
-    ssh2text(cmd_result)
-
     client.close()
     del client, stdin, stdout, stderr
+    ssh2text(cmd_result)
     return cmd_result
 
 
