@@ -1,8 +1,10 @@
+from __future__ import print_function
 from gps3 import gps3
-import numpy as np
 import paramiko
 import re
-
+import websocket
+import csv
+import json
 # ----------------------------------------------------------
 IP_ADDRESS = '192.168.1.1'
 USER_NAME = 'admin'
@@ -17,9 +19,9 @@ gps_socket.watch()
 
 keys = ["time", "lat", "lon", "alt", "speed", "Current",
         "RSSI", "ECIO", "IO", "SINR", "RSRQ", "SNR", "RSRP"]
-value = []
 keysg = ["time", "lat", "lon", "alt", "speed"]
 keysr = ["Current", "RSSI", "ECIO", "IO", "SINR(8)", "RSRQ", "SNR", "RSRP"]
+value = []
 list_rows = [keys]
 lastflag = False
 
@@ -50,13 +52,11 @@ def ssh():
 
 def apnd(ntext):
     global value, No, list_rows, lastflag
-    print("inside apnd")
     if lastflag:
         num = re.findall("Network 'lte': '(.*) dBm", ntext)
         fnum = [float(n) for n in num]
         lnum = fnum[0]
         value.append(lnum)
-        print("last")
         lastflag = False
     elif "dBm" in ntext and "Network" in ntext:
         num = re.findall("Network 'lte': '(.*) dBm", ntext)
@@ -72,7 +72,6 @@ def apnd(ntext):
 
 def ssh2text(cmd_result):
     global value, No, list_rows, lastflag
-    print("inside ssh2text")
     tflag = False
     keyflag = True
     f = cmd_result.splitlines()
@@ -112,8 +111,25 @@ def gps():
             cmd_result = ssh()
             ssh2text(cmd_result)
             list_rows.append(value)
+
+            with open('all.csv', "w") as f:
+                writer = csv.writer(f, lineterminator='\n')
+                if isinstance(list_rows[0], list):
+                    writer.writerows(list_rows)
+                else:
+                    writer.writerow(list_rows)
+
+            print(value)
+
+            if __name__ == "__main__":
+                websocket.enableTrace(False)
+                ws = websocket.create_connection(
+                    "ws://203.178.143.13:5111")
+                data = json.dumps(value)
+                ws.send(data)
+                ws.close()
+
             value = []
-            np.savetxt("all.csv", list_rows, delimiter=",", fmt='% s')
 
 
 def main():
