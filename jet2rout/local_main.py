@@ -15,13 +15,12 @@ data_stream = gps3.DataStream()
 gps_socket.connect()
 gps_socket.watch()
 
-keys = ["time", "lat", "lon", "alt", "speed"]
+keys = ["time", "lat", "lon", "alt", "speed", "Current",
+        "RSSI", "ECIO", "IO", "SINR", "RSRQ", "SNR", "RSRP"]
 value = []
-list_rows = [keys]
-
+keysg = ["time", "lat", "lon", "alt", "speed"]
 keysr = ["Current", "RSSI", "ECIO", "IO", "SINR(8)", "RSRQ", "SNR", "RSRP"]
-valuer = []
-list_rowsr = [keysr]
+list_rows = [keys]
 lastflag = False
 
 
@@ -50,31 +49,29 @@ def ssh():
 
 
 def apnd(ntext):
-    global valuer, No, list_rowsr, lastflag
+    global value, No, list_rows, lastflag
     print("inside apnd")
     if lastflag:
         num = re.findall("Network 'lte': '(.*) dBm", ntext)
         fnum = [float(n) for n in num]
         lnum = fnum[0]
-        valuer.append(lnum)
+        value.append(lnum)
         print("last")
-        list_rowsr.append(valuer)
-        valuer = []
         lastflag = False
     elif "dBm" in ntext and "Network" in ntext:
         num = re.findall("Network 'lte': '(.*) dBm", ntext)
         fnum = [float(n) for n in num]
         lnum = fnum[0]
-        valuer.append(lnum)
+        value.append(lnum)
     elif "dB" in ntext and "Network" in ntext:
         num = re.findall("Network 'lte': '(.*) dB", ntext)
         fnum = [float(n) for n in num]
         lnum = fnum[0]
-        valuer.append(lnum)
+        value.append(lnum)
 
 
 def ssh2text(cmd_result):
-    global valuer, No, list_rowsr, lastflag
+    global value, No, list_rows, lastflag
     print("inside ssh2text")
     tflag = False
     keyflag = True
@@ -90,12 +87,12 @@ def ssh2text(cmd_result):
             num = re.findall("IO: '(.*) dBm", ntext)
             fnum = [float(n) for n in num]
             lnum = fnum[0]
-            valuer.append(lnum)
+            value.append(lnum)
         elif "SINR (8)" in ntext:
             num = re.findall(": '(.*) dB", ntext)
             fnum = [float(n) for n in num]
             lnum = fnum[0]
-            valuer.append(lnum)
+            value.append(lnum)
         elif "RSRP" in ntext:
             tflag = True
             lastflag = True
@@ -106,18 +103,17 @@ def ssh2text(cmd_result):
 
 
 def gps():
-    global value, keys, list_rowsr
+    global value, keys, list_rows, keysg
     for new_data in gps_socket:
         if new_data:
-            for key in keys:
+            for key in keysg:
                 data_stream.unpack(new_data)
                 value.append(data_stream.TPV[key])
-            list_rows.append(value)
-            value = []
             cmd_result = ssh()
             ssh2text(cmd_result)
-            np.savetxt("gps.csv", list_rows, delimiter=",", fmt='% s')
-            np.savetxt("router.csv", list_rowsr, delimiter=",", fmt='% s')
+            list_rows.append(value)
+            value = []
+            np.savetxt("all.csv", list_rows, delimiter=",", fmt='% s')
 
 
 def main():
