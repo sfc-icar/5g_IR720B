@@ -10,7 +10,10 @@ IP_ADDRESS = '192.168.1.1'
 USER_NAME = 'admin'
 PWD = "admin"
 CMD = 'sudo -S qmicli -d /dev/cdc-wdm1 --nas-get-signal-strength'
+CMD2 = 'sudo -S qmicli -d /dev/cdc-wdm1 --nas-get-lte-cphy-ca-info'
 # ----------------------------------------------------------
+
+#--nas-get-rf-band-info --nas-get-signal-strength --nas-get-lte-cphy-ca-info --nas-get-cell-location-info
 
 gps_socket = gps3.GPSDSocket()
 data_stream = gps3.DataStream()
@@ -19,8 +22,9 @@ gps_socket.watch()
 
 keys = ["time", "lat", "lon", "alt", "speed", "Current",
         "RSSI", "ECIO", "IO", "SINR", "RSRQ", "SNR", "RSRP"]
-keysg = ["time", "lat", "lon", "alt", "speed"]
+keysg = ["time", "lat", "lon", "alt", "speed", "Physical Cell"]
 keysr = ["Current", "RSSI", "ECIO", "IO", "SINR(8)", "RSRQ", "SNR", "RSRP"]
+keysi = ["PCID"]
 value = []
 list_rows = [keys]
 lastflag = False
@@ -51,7 +55,7 @@ def ssh():
 
 
 def apnd(ntext):
-    global value, No, list_rows, lastflag
+    global value, list_rows, lastflag
     if lastflag:
         num = re.findall("Network 'lte': '(.*) dBm", ntext)
         fnum = [float(n) for n in num]
@@ -71,7 +75,7 @@ def apnd(ntext):
 
 
 def ssh2text(cmd_result):
-    global value, No, list_rows, lastflag
+    global value, list_rows, lastflag
     tflag = False
     keyflag = True
     f = cmd_result.splitlines()
@@ -101,6 +105,55 @@ def ssh2text(cmd_result):
                     tflag = True
 
 
+def ssh_info():
+    global IP_ADDRESS, USER_NAME, PWD, CMD2
+
+    client = paramiko.SSHClient()
+    client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+    client.connect(IP_ADDRESS,
+                   username=USER_NAME,
+                   password=PWD,
+                   timeout=10.0)
+
+    stdin, stdout, stderr = client.exec_command(CMD2)
+
+    stdin.write('admin\n')
+    stdin.flush()
+
+    cmd_result_info = ''
+    for line in stdout:
+        cmd_result_info += line
+
+    client.close()
+    del client, stdin, stdout, stderr
+    return cmd_result_info
+
+
+def apnd_info(ntext):
+    global value, list_rows
+    if "dBm" in ntext and "Physical Cell ID" in ntext:
+        num = re.findall("Physical Cell ID: '(.*)'", ntext)
+        fnum = [float(n) for n in num]
+        lnum = fnum[0]
+        value.append(lnum)
+
+
+def ssh2text_info(cmd_result_info):
+    global value, list_rows
+    tflag = False
+    keyflag = True
+    f = cmd_result_info.splitlines()
+    for text in f:
+        ntext = text.rstrip('\n')
+        if tflag:
+            apnd_info(ntext)
+            tflag = False
+        elif "Primary Cell Info" in ntext:
+            tflag = True
+        else:
+            pass
+
+
 def gps():
     global value, keys, list_rows, keysg
     for new_data in gps_socket:
@@ -108,8 +161,12 @@ def gps():
             for key in keysg:
                 data_stream.unpack(new_data)
                 value.append(data_stream.TPV[key])
+
             cmd_result = ssh()
             ssh2text(cmd_result)
+            cmd_result_info = ssh_info()
+            ssh2text_info(cmd_result_info)
+
             list_rows.append(value)
 
             with open('all.csv', "w") as f:
@@ -128,7 +185,6 @@ def gps():
                 data = json.dumps(value)
                 ws.send(data)
                 ws.close()
-
             value = []
 
 

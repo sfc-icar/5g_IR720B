@@ -31,9 +31,9 @@ class Websocket_Server():
             if row[num] == "n/a":
                 row[num] = 0
         with conn.cursor() as cursor:
-            sql = "INSERT INTO gndr (time, lat, lon, alt, speed, Current, RSSI, ECIO, IO, SINR, RSRQ, SNR, RSRP) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"
+            sql = "INSERT INTO gndr (time, lat, lon, alt, speed, Current, RSSI, ECIO, IO, SINR, RSRQ, SNR, RSRP, PCID) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"
             cursor.execute(sql, (row[0], row[1], row[2], row[3], row[4], row[5],
-                           row[6], row[7], row[8], row[9], row[10], row[11], row[12]))
+                           row[6], row[7], row[8], row[9], row[10], row[11], row[12], row[13]))
         conn.commit()
         conn.close()
 
