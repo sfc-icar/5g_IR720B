@@ -107,7 +107,6 @@ def ssh2text(cmd_result):
 
 def ssh_info():
     global IP_ADDRESS, USER_NAME, PWD, CMD2
-
     client = paramiko.SSHClient()
     client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
     client.connect(IP_ADDRESS,
@@ -131,7 +130,7 @@ def ssh_info():
 
 def apnd_info(ntext):
     global value, list_rows
-    if "dBm" in ntext and "Physical Cell ID" in ntext:
+    if "Physical Cell ID" in ntext:
         num = re.findall("Physical Cell ID: '(.*)'", ntext)
         fnum = [float(n) for n in num]
         lnum = fnum[0]
@@ -164,6 +163,7 @@ def gps():
 
             cmd_result = ssh()
             ssh2text(cmd_result)
+
             cmd_result_info = ssh_info()
             ssh2text_info(cmd_result_info)
 
@@ -178,13 +178,17 @@ def gps():
 
             print(value)
 
-            if __name__ == "__main__":
-                websocket.enableTrace(False)
-                ws = websocket.create_connection(
-                    "ws://203.178.143.13:5111")
-                data = json.dumps(value)
-                ws.send(data)
-                ws.close()
+            try:
+                if __name__ == "__main__":
+                    websocket.enableTrace(False)
+                    ws = websocket.create_connection(
+                        "ws://203.178.143.13:5111")
+                    data = json.dumps(value)
+                    ws.send(data)
+                    ws.close()
+            except:
+                pass
+
             value = []
 
 
