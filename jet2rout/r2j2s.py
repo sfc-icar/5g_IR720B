@@ -21,8 +21,8 @@ gps_socket.connect()
 gps_socket.watch()
 
 keys = ["time", "lat", "lon", "alt", "speed", "Current",
-        "RSSI", "ECIO", "IO", "SINR", "RSRQ", "SNR", "RSRP"]
-keysg = ["time", "lat", "lon", "alt", "speed", "Physical Cell"]
+        "RSSI", "ECIO", "IO", "SINR", "RSRQ", "SNR", "RSRP", "PCID"]
+keysg = ["time", "lat", "lon", "alt", "speed"]
 keysr = ["Current", "RSSI", "ECIO", "IO", "SINR(8)", "RSRQ", "SNR", "RSRP"]
 keysi = ["PCID"]
 value = []
