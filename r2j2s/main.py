@@ -196,7 +196,7 @@ def gps():
                     if __name__ == "__main__":
                         websocket.enableTrace(False)
                         ws = websocket.create_connection(
-                            "ws://203.178.143.13:5111")
+                            "ws://hogehoge")
                         data = json.dumps(value)
                         ws.send(data)
                         ws.close()
