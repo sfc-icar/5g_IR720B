@@ -8,6 +8,7 @@ import websocket
 import csv
 import json
 import sys
+
 # ----------------------------------------------------------
 IP_ADDRESS = '192.168.1.1'
 USER_NAME = 'admin'
@@ -23,11 +24,10 @@ data_stream = gps3.DataStream()
 gps_socket.connect()
 gps_socket.watch()
 
-keys = ["time", "lat", "lon", "alt", "speed", "Current",
-        "RSSI", "ECIO", "IO", "SINR", "RSRQ", "SNR", "RSRP", "PCID"]
 keysg = ["time", "lat", "lon", "alt", "speed"]
 keysr = ["Current", "RSSI", "ECIO", "IO", "SINR(8)", "RSRQ", "SNR", "RSRP"]
-keysi = ["PCID"]
+keysi = ["s_pcid", "s_rc", "s_db", "s_lband", "s_State", "p_pcid", "p_rc", "p_db", "p_lband"]
+keys = keysg + keysr + keysi
 value = []
 list_rows = [keys]
 lastflag = False
@@ -78,15 +78,7 @@ def ssh2text_cpca(cmd_result_info):
     global value, list_rows
 
     def sc_info(ntext):
-        global value, list_rows
-        if "Physical Cell ID" in ntext:
-            num = re.findall("Physical Cell ID: '(.*)'", ntext)
-            fnum = [float(n) for n in num]
-            lnum = fnum[0]
-            value.append(lnum)
-
-    def pc_info(ntext):
-        global value, list_rows
+        global value, list_rows, sflag
         if "Physical Cell ID" in ntext:
             num = re.findall("Physical Cell ID: '(.*)'", ntext)
             fnum = [float(n) for n in num]
@@ -104,7 +96,36 @@ def ssh2text_cpca(cmd_result_info):
             value.append(lnum)
         elif "LTE Band" in ntext:
             num = re.findall("LTE Band: '(.*)'", ntext)
+            fnum = [str(n) for n in num]
+            lnum = fnum[0]
+            value.append(lnum)
+        elif "State" in ntext:
+            num = re.findall("State: '(.*)'", ntext)
+            fnum = [str(n) for n in num]
+            lnum = fnum[0]
+            value.append(lnum)
+            sflag = False
+
+    def pc_info(ntext):
+        global value, list_rows, pflag
+        if "Physical Cell ID" in ntext:
+            num = re.findall("Physical Cell ID: '(.*)'", ntext)
             fnum = [float(n) for n in num]
+            lnum = fnum[0]
+            value.append(lnum)
+        elif "RX Channel" in ntext:
+            num = re.findall("RX Channel: '(.*)'", ntext)
+            fnum = [float(n) for n in num]
+            lnum = fnum[0]
+            value.append(lnum)
+        elif "DL Bandwidth" in ntext:
+            num = re.findall("DL Bandwidth: '(.*)'", ntext)
+            fnum = [float(n) for n in num]
+            lnum = fnum[0]
+            value.append(lnum)
+        elif "LTE Band" in ntext:
+            num = re.findall("LTE Band: '(.*)'", ntext)
+            fnum = [str(n) for n in num]
             lnum = fnum[0]
             value.append(lnum)
             pflag = False
@@ -149,7 +170,6 @@ def ssh2text_sist(cmd_result):
             value.append(lnum)
 
     tflag = False
-    keyflag = True
     f = cmd_result.splitlines()
     for text in f:
         ntext = text.rstrip('\n')
