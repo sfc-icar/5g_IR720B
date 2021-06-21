@@ -1,13 +1,15 @@
 #!/usr/bin/env python3
 
 from __future__ import print_function
-from gps3 import gps3
-import paramiko
-import re
-import websocket
+
 import csv
 import json
+import re
 import sys
+
+import paramiko
+import websocket
+from gps3 import gps3
 
 # ----------------------------------------------------------
 IP_ADDRESS = '192.168.1.1'
@@ -31,7 +33,6 @@ keys = keysg + keysr + keysi
 value = []
 list_rows = [keys]
 lastflag = False
-
 
 def gps():
     global value, keys, list_rows, keysg
