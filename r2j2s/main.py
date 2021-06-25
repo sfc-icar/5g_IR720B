@@ -28,12 +28,16 @@ gps_socket.watch()
 
 keysg = ["time", "lat", "lon", "alt", "speed"]
 keysr = ["Current", "RSSI", "ECIO", "IO", "SINR(8)", "RSRQ", "SNR", "RSRP"]
-keysi = ["s_pcid", "s_rc", "s_db", "s_lband", "s_State", "p_pcid", "p_rc", "p_db", "p_lband"]
+keysi = ["s_pcid", "s_rc", "s_db", "s_lband",
+         "s_State", "p_pcid", "p_rc", "p_db", "p_lband"]
 keys = keysg + keysr + keysi
 value = []
 list_rows = [keys]
 lastflag = False
 
+
+# ----------------------------------------------------------
+# GPSを取得　前の時間と違う値が出たら、routerの情報取得関数を実行
 def gps():
     global value, keys, list_rows, keysg
     old_data = []
@@ -62,6 +66,8 @@ def gps():
                 value = []
 
 
+# ----------------------------------------------------------
+#　二つ目のコマンド実行
 def ssh_cpca():
     global IP_ADDRESS, USER_NAME, PWD, CMD2, client
 
@@ -73,6 +79,9 @@ def ssh_cpca():
         cmd_result += line
     del stdin, stdout, stderr
     return cmd_result
+
+# ----------------------------------------------------------
+#　二つ目のコマンドの結果を整形
 
 
 def ssh2text_cpca(cmd_result_info):
@@ -148,6 +157,24 @@ def ssh2text_cpca(cmd_result_info):
             pass
 
 
+# ----------------------------------------------------------
+#　一つ目のコマンドを実行
+def ssh_sist():
+    global IP_ADDRESS, USER_NAME, PWD, CMD, client
+
+    stdin, stdout, stderr = client.exec_command(CMD)
+    stdin.write('admin\n')
+    stdin.flush()
+    cmd_result = ''
+    for line in stdout:
+        cmd_result += line
+    del stdin, stdout, stderr
+    return cmd_result
+
+
+# ----------------------------------------------------------
+#　一つ目のコマンドの結果を整形
+
 def ssh2text_sist(cmd_result):
     global value, list_rows, lastflag
 
@@ -197,18 +224,8 @@ def ssh2text_sist(cmd_result):
                 if key in ntext:
                     tflag = True
 
-
-def ssh_sist():
-    global IP_ADDRESS, USER_NAME, PWD, CMD, client
-
-    stdin, stdout, stderr = client.exec_command(CMD)
-    stdin.write('admin\n')
-    stdin.flush()
-    cmd_result = ''
-    for line in stdout:
-        cmd_result += line
-    del stdin, stdout, stderr
-    return cmd_result
+# ----------------------------------------------------------
+#　CSVに書き出し
 
 
 def makecsv():
@@ -226,6 +243,9 @@ def makecsv():
         else:
             writer.writerow(list_rows)
 
+# ----------------------------------------------------------
+#　sqlに送信
+
 
 def sendsql():
     global value
@@ -241,23 +261,34 @@ def sendsql():
     except:
         pass
 
+# ----------------------------------------------------------
+#　routerにセッション作成
+
+
+def makesession():
+    global IP_ADDRESS, USER_NAME, PWD, client
+    client = paramiko.SSHClient()
+    client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+    client.connect(IP_ADDRESS,
+                   username=USER_NAME,
+                   password=PWD,
+                   timeout=10.0)
+    gps()
+    client.close()
+    del client
+
+# ----------------------------------------------------------
+
 
 def main():
-    while True:
-        try:
-            global IP_ADDRESS, USER_NAME, PWD, client
-            client = paramiko.SSHClient()
-            client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
-            client.connect(IP_ADDRESS,
-                           username=USER_NAME,
-                           password=PWD,
-                           timeout=10.0)
-            gps()
-            client.close()
-            del client
+    try:
+        makesession()
 
-        except:
-            pass
+    except KeyboardInterrupt:
+        sys.exit(0)
+
+    except:
+        main()
 
 
 main()
