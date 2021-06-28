@@ -31,9 +31,9 @@ class Websocket_Server():
             if row[num] == "n/a":
                 row[num] = None
         with conn.cursor() as cursor:
-            sql = "INSERT INTO gndr_main(time, lat, lon, alt, speed, Current, RSSI, ECIO, IO, SINR, RSRQ, SNR, RSRP, s_pcid, s_rc, s_db, s_lband, s_State, p_pcid, p_rc, p_db, p_lband) VALUES ( % s, % s, % s, % s, % s, % s, % s, % s, % s, % s,% s, % s, % s, % s, % s, % s, % s, % s, % s, % s, % s, % s)"
+            sql = "INSERT INTO gndr_main(time, lat, lon, alt, Current, RSSI, ECIO, IO, SINR, RSRQ, SNR, RSRP, s_pcid, s_rc, s_db, s_lband, s_State, p_pcid, p_rc, p_db, p_lband) VALUES ( % s, % s, % s, % s, % s, % s, % s, % s, % s, % s,% s, % s, % s, % s, % s, % s, % s, % s, % s, % s, % s, % s)"
             cursor.execute(sql, (row[0], row[1], row[2], row[3], row[4], row[5],
-                           row[6], row[7], row[8], row[9], row[10], row[11], row[12], row[13], row[14], row[15], row[16], row[17], row[18], row[19], row[20], row[21]))
+                           row[6], row[7], row[8], row[9], row[10], row[11], row[12], row[13], row[14], row[15], row[16], row[17], row[18], row[19], row[20]))
         conn.commit()
         conn.close()
 

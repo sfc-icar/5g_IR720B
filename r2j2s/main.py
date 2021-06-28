@@ -119,7 +119,7 @@ def serial_main():
         value.append(alt())
         closesession()
     except:
-        pass
+        value.append(None)
 
 
 # ----------------------------------------------------------
