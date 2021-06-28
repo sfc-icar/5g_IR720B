@@ -107,7 +107,7 @@ def serial_main():
         altitude = readSer.read(2)
         return(altitude)
 
-     def closesession():
+    def closesession():
         global writeSer, readSer
         # Close session
         writeSer.close()
