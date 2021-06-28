@@ -6,6 +6,8 @@ import csv
 import json
 import re
 import sys
+import serial
+
 
 import paramiko
 import websocket
@@ -26,18 +28,25 @@ data_stream = gps3.DataStream()
 gps_socket.connect()
 gps_socket.watch()
 
-keysg = ["time", "lat", "lon", "alt", "speed"]
+keysg = ["time", "lat", "lon"]
+keysa = ["alt"]
 keysr = ["Current", "RSSI", "ECIO", "IO", "SINR(8)", "RSRQ", "SNR", "RSRP"]
 keysi = ["s_pcid", "s_rc", "s_db", "s_lband",
          "s_State", "p_pcid", "p_rc", "p_db", "p_lband"]
-keys = keysg + keysr + keysi
+keys = keysg + keysa + keysr + keysi
 value = []
 list_rows = [keys]
 lastflag = False
+# ----------------------------------------------------------
 
+deviceName = '/dev/tty.＊'    # ls -l /dev/tty.*
+baudrateNum = 115200
+timeoutNum = 3
 
 # ----------------------------------------------------------
 # GPSを取得　前の時間と違う値が出たら、routerの情報取得関数を実行
+
+
 def gps():
     global value, keys, list_rows, keysg
     old_data = []
@@ -49,6 +58,8 @@ def gps():
                     data_stream.unpack(new_data)
                     value.append(data_stream.TPV[key])
                 old_data = data_stream.TPV["time"]
+
+                serial_main()
 
                 cmd_result = ssh_sist()
                 ssh2text_sist(cmd_result)
@@ -64,6 +75,51 @@ def gps():
                 print(value)
 
                 value = []
+
+# ----------------------------------------------------------
+#　serial関連
+
+
+def serial_main():
+    global keysa
+    calibration = "C"
+    give = "G"
+
+    def makesession():
+        global writeSer, readSer
+        # Make session
+        writeSer = serial.Serial(deviceName, baudrateNum, timeout=timeoutNum)
+        readSer = serial.Serial(deviceName, baudrateNum, timeout=timeoutNum)
+
+    def cal():
+        # calibration
+        writeSer.write(calibration.encode())
+        calre = readSer.read()
+        if calre == "O":
+            print("calibration complete")
+        elif calre == "N":
+            print("Please check sensor")
+
+    def alt():
+        # send give
+        writeSer.write(give.encode())
+        # take altitude
+        altitude = readSer.read(2)
+        return(altitude)
+
+     def closesession():
+        global writeSer, readSer
+        # Close session
+        writeSer.close()
+        readSer.close()
+
+    try:
+        makesession()
+        cal()
+        value.append(alt())
+        closesession()
+    except:
+        pass
 
 
 # ----------------------------------------------------------
