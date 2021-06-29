@@ -39,7 +39,7 @@ list_rows = [keys]
 lastflag = False
 # ----------------------------------------------------------
 
-deviceName = '/dev/tty.＊'    # ls -l /dev/tty.*
+deviceName = '/dev/ttyACM0'    # ls -l /dev/tty.*
 baudrateNum = 115200
 timeoutNum = 3
 
@@ -104,7 +104,11 @@ def serial_main():
         # send give
         writeSer.write(give.encode())
         # take altitude
-        altitude = readSer.read(2)
+        altitude1 = readSer.read()
+        altitude2 = readSer.read()
+        altitude1 = str(int.from_bytes(altitude1, 'big'))
+        altitude2 = str(int.from_bytes(altitude2, 'big'))
+        altitude = int(altitude1+altitude2)
         return(altitude)
 
     def closesession():

@@ -16,7 +16,7 @@ function initMap() {
 
 var getrequest = function () {
     var getresult = "";
-    var geturl = "https://icar-svr.sfc.wide.ad.jp/vggps/all_0";
+    var geturl = "https://icar-svr.sfc.wide.ad.jp/vggps/all_wip";
     // APIたたく
     const request = new XMLHttpRequest();
     request.open('GET', geturl);
