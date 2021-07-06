@@ -1,6 +1,6 @@
-import serial
-import sys
 import time
+import sys
+import serial
 
 deviceName = '/dev/ttyACM0'    # ls -l /dev/tty.*
 baudrateNum = 115200
@@ -22,11 +22,11 @@ def cal():
     time.sleep(5)
     calre = readSer.read()
     calre = calre.decode()
+    #calre = str.from_bytes(calre, 'big')
     if calre == "O":
         print("calibration complete")
     elif calre == "N":
         print("Please check sensor")
-        sys.exit(0)
 
 
 def alt():
@@ -41,17 +41,15 @@ def alt():
     return(altitude)
 
 
-def main():
+def make():
     makesession()
-    try:
-        cal()
-        while True:
-            print(alt())
-            time.sleep(1)
-    except KeyboardInterrupt:
-        writeSer.close()
-        readSer.close()
-        sys.exit(0)
+    cal()
 
 
-main()
+def askone():
+    return(alt())
+
+
+def close():
+    writeSer.close()
+    readSer.close()

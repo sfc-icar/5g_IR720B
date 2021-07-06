@@ -13,6 +13,8 @@ import paramiko
 import websocket
 from gps3 import gps3
 
+import serialalt as alt
+
 # ----------------------------------------------------------
 IP_ADDRESS = '192.168.1.1'
 USER_NAME = 'admin'
@@ -59,7 +61,7 @@ def gps():
                     value.append(data_stream.TPV[key])
                 old_data = data_stream.TPV["time"]
 
-                serial_main()
+                value.append(alt.askone())
 
                 cmd_result = ssh_sist()
                 ssh2text_sist(cmd_result)
@@ -77,57 +79,9 @@ def gps():
                 value = []
 
 # ----------------------------------------------------------
-#　serial関連
-
-
-def serial_main():
-    global keysa
-    calibration = "C"
-    give = "G"
-
-    def makesession():
-        global writeSer, readSer
-        # Make session
-        writeSer = serial.Serial(deviceName, baudrateNum, timeout=timeoutNum)
-        readSer = serial.Serial(deviceName, baudrateNum, timeout=timeoutNum)
-
-    def cal():
-        # calibration
-        writeSer.write(calibration.encode())
-        calre = readSer.read()
-        if calre == "O":
-            print("calibration complete")
-        elif calre == "N":
-            print("Please check sensor")
-
-    def alt():
-        # send give
-        writeSer.write(give.encode())
-        # take altitude
-        altitude1 = readSer.read()
-        altitude2 = readSer.read()
-        altitude1 = str(int.from_bytes(altitude1, 'big'))
-        altitude2 = str(int.from_bytes(altitude2, 'big'))
-        altitude = int(altitude1+altitude2)
-        return(altitude)
-
-    def closesession():
-        global writeSer, readSer
-        # Close session
-        writeSer.close()
-        readSer.close()
-
-    try:
-        makesession()
-        cal()
-        value.append(alt())
-        closesession()
-    except:
-        value.append(None)
-
-
-# ----------------------------------------------------------
 #　二つ目のコマンド実行
+
+
 def ssh_cpca():
     global IP_ADDRESS, USER_NAME, PWD, CMD2, client
 
@@ -333,6 +287,7 @@ def makesession():
                    username=USER_NAME,
                    password=PWD,
                    timeout=10.0)
+    alt.make()
     gps()
     client.close()
     del client
@@ -345,10 +300,11 @@ def main():
         makesession()
 
     except KeyboardInterrupt:
+        alt.close()
         sys.exit(0)
 
-    except:
-        main()
+    # except:
+        # main()
 
 
 main()
