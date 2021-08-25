@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<kml xmlns="http://www.opengis.net/kml/2.2" xmlns:gx="http://www.google.com/kml/ext/2.2" xmlns:kml="http://www.opengis.net/kml/2.2" xmlns:atom="http://www.w3.org/2005/Atom">
+<Document>
+	<name>SNR</name>
+
+
+	<gx:CascadingStyle kml:id="Green_CascadingStyle">
+		<Style>
+			<IconStyle>
+				<Icon>
+					<href>https://earth.google.com/earth/rpc/cc/icon?color=fbc02d&amp;id=2000&amp;scale=4</href>
+				</Icon>
+				<hotSpot x="64" y="128" xunits="pixels" yunits="insetPixels"/>
+			</IconStyle>
+		</Style>
+	</gx:CascadingStyle>
+	<StyleMap id="Green">
+		<Pair>
+			<key>normal</key>
+			<styleUrl>#Green_CascadingStyle</styleUrl>
+		</Pair>
+		<Pair>
+			<key>highlight</key>
+			<styleUrl>#Green_CascadingStyle</styleUrl>
+		</Pair>
+	</StyleMap>
+
+	<gx:CascadingStyle kml:id="Yellow_CascadingStyle">
+		<Style>
+			<IconStyle>
+				<Icon>
+					<href>https://earth.google.com/earth/rpc/cc/icon?color=388e3c&amp;id=2000&amp;scale=4</href>
+				</Icon>
+				<hotSpot x="64" y="128" xunits="pixels" yunits="insetPixels"/>
+			</IconStyle>
+		</Style>
+	</gx:CascadingStyle>
+	<StyleMap id="Yellow">
+		<Pair>
+			<key>normal</key>
+			<styleUrl>#Yellow_CascadingStyle</styleUrl>
+		</Pair>
+		<Pair>
+			<key>highlight</key>
+			<styleUrl>#Yellow_CascadingStyle</styleUrl>
+		</Pair>
+	</StyleMap>
+
+	<gx:CascadingStyle kml:id="Red_CascadingStyle">
+		<Style>
+			<IconStyle>
+				<Icon>
+					<href>https://earth.google.com/earth/rpc/cc/icon?color=d32f2f&amp;id=2000&amp;scale=4</href>
+				</Icon>
+				<hotSpot x="64" y="128" xunits="pixels" yunits="insetPixels"/>
+			</IconStyle>
+		</Style>
+	</gx:CascadingStyle>
+	<StyleMap id="Red">
+		<Pair>
+			<key>normal</key>
+			<styleUrl>#Red_CascadingStyle</styleUrl>
+		</Pair>
+		<Pair>
+			<key>highlight</key>
+			<styleUrl>#Red_CascadingStyle</styleUrl>
+		</Pair>
+	</StyleMap>
+
+	<Placemark>
+		<styleUrl>#Green</styleUrl>
+		<Point>
+			<altitudeMode>relativeToGround</altitudeMode>
+			<coordinates>139.4254612,35.3882838,50</coordinates>
+		</Point>
+	</Placemark>
+
+	<Placemark>
+		<styleUrl>#Yellow</styleUrl>
+		<Point>
+			<altitudeMode>relativeToGround</altitudeMode>
+			<coordinates>139.4254612,35.3882838,100</coordinates>
+		</Point>
+	</Placemark>
+
+	<Placemark>
+		<styleUrl>#Red</styleUrl>
+		<Point>
+			<altitudeMode>relativeToGround</altitudeMode>
+			<coordinates>139.4254442,35.3885464,200</coordinates>
+		</Point>
+	</Placemark>
+
+</Document>
+</kml>

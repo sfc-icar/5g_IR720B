@@ -6,6 +6,8 @@ import csv
 import json
 import re
 import sys
+import serial
+
 
 import paramiko
 import websocket
@@ -19,8 +21,6 @@ USER_NAME = 'admin'
 PWD = "admin"
 CMD = 'sudo -S qmicli -d /dev/cdc-wdm1 --nas-get-signal-strength'
 CMD2 = 'sudo -S qmicli -d /dev/cdc-wdm1 --nas-get-lte-cphy-ca-info'
-CMD3 = 'sudo -S qmicli -d /dev/cdc-wdm1 --nas-get-cell-location-info'
-
 # ----------------------------------------------------------
 
 # --nas-get-rf-band-info --nas-get-signal-strength --nas-get-lte-cphy-ca-info --nas-get-cell-location-info
@@ -35,7 +35,6 @@ keysa = ["alt"]
 keysr = ["Current", "RSSI", "ECIO", "IO", "SINR(8)", "RSRQ", "SNR", "RSRP"]
 keysi = ["s_pcid", "s_rc", "s_db", "s_lband",
          "s_State", "p_pcid", "p_rc", "p_db", "p_lband"]
-keysi = ["E-UTRA band 1: 2100","E-UTRA band 1: 900"]
 keys = keysg + keysa + keysr + keysi
 value = []
 list_rows = [keys]
@@ -70,9 +69,6 @@ def gps():
                 cmd_result = ssh_cpca()
                 ssh2text_cpca(cmd_result)
 
-                cmd_result=ssh_cli()
-                ssh2text_cli(cmd_result)
-
                 list_rows.append(value)
 
                 makecsv()
@@ -81,116 +77,6 @@ def gps():
                 print(value)
 
                 value = []
-
-
-# ----------------------------------------------------------
-#　三つ目のコマンド実行
-
-
-def ssh_cli():
-    global IP_ADDRESS, USER_NAME, PWD, CMD3, client
-
-    stdin, stdout, stderr = client.exec_command(CMD3)
-    stdin.write('admin\n')
-    stdin.flush()
-    cmd_result = ''
-    for line in stdout:
-        cmd_result += line
-    del stdin, stdout, stderr
-    return cmd_result
-
-# ----------------------------------------------------------
-#　三つ目のコマンドの結果を整形
-
-
-def ssh2text_cli(cmd_result_cli):
-    global value, list_rows
-
-    def sc_info(ntext):
-        global list_rows
-        if "Cell" in ntext:
-            num = re.findall("Cell [(.*)]:", ntext)
-            fnum = [float(n) for n in num]
-            lnum = fnum[0]
-            SResultValue.append(ntext)
-            SResultValue.append(lnum)
-        elif "Physical Cell ID" in ntext:
-            num = re.findall("Physical Cell ID: '(.*)'", ntext)
-            fnum = [float(n) for n in num]
-            lnum = fnum[0]
-            SResultValue.append(lnum)
-        elif "RSRQ" in ntext:
-            num = re.findall("RSRQ: '(.*)' dB", ntext)
-            fnum = [float(n) for n in num]
-            lnum = fnum[0]
-            SResultValue.append(lnum)
-        elif "RSRP" in ntext:
-            num = re.findall("RSRP: '(.*)' dBm", ntext)
-            fnum = [float(n) for n in num]
-            lnum = fnum[0]
-            SResultValue.append(lnum)
-        elif "RSSI" in ntext:
-            num = re.findall("RSSI: '(.*)' dBm", ntext)
-            fnum = [float(n) for n in num]
-            lnum = fnum[0]
-            SResultValue.append(lnum)
-
-
-    def pc_info(ntext):
-        global list_rows, pflag
-        if "Cell" in ntext:
-            num = re.findall("Cell [(.*)]:", ntext)
-            fnum = [float(n) for n in num]
-            lnum = fnum[0]
-            PResultValue.append(ntext)
-            PResultValue.append(lnum)
-        elif "Physical Cell ID" in ntext:
-            num = re.findall("Physical Cell ID: '(.*)'", ntext)
-            fnum = [float(n) for n in num]
-            lnum = fnum[0]
-            PResultValue.append(lnum)
-        elif "RSRQ" in ntext:
-            num = re.findall("RSRQ: '(.*)' dB", ntext)
-            fnum = [float(n) for n in num]
-            lnum = fnum[0]
-            PResultValue.append(lnum)
-        elif "RSRP" in ntext:
-            num = re.findall("RSRP: '(.*)' dBm", ntext)
-            fnum = [float(n) for n in num]
-            lnum = fnum[0]
-            PResultValue.append(lnum)
-        elif "RSSI" in ntext:
-            num = re.findall("RSSI: '(.*)' dBm", ntext)
-            fnum = [float(n) for n in num]
-            lnum = fnum[0]
-            PResultValue.append(lnum)
-
-
-    sflag = False
-    pflag = False
-    PResultValue = []
-    SResultValue = []
-    f = cmd_result_cli.splitlines()
-    try:
-        for text in f:
-            ntext = text.rstrip('\n')
-            if "2100" in ntext:
-                pflag = True
-            elif "900" in ntext:
-                pflag = False
-                sflag = True
-            if pflag:
-                pc_info(ntext)
-            elif sflag:
-                sc_info(ntext)
-            else:
-                pass
-    except:
-        print("ERR:inside CMD3")
-    finally:
-        value.append(PResultValue)
-        value.append(SResultValue)
-
 
 # ----------------------------------------------------------
 #　二つ目のコマンド実行
