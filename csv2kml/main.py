@@ -1,23 +1,23 @@
 import csv
 
-data_place = "./sample.csv"
+data_place = "./csv/nana.csv"
 
 def locateformatter(locate):
-    data = (locate[0] + "," + locate[1] + "," + locate[2])
+    data = (locate[1] + "," + locate[0] + "," + locate[2])
     latlondata = ("<coordinates>" + data + "</coordinates>")
     return latlondata
 
 def snrformatter(SNR):
-    if SNR > 13:
-        color = "Red"
-    elif SNR > 12:
-        color = "Yellow"
-    elif SNR > 0:
-        color = "Green"
-    color = "<styleUrl>#"+color+"</styleUrl>"
-    print(SNR)
-    print(color)
-    return color
+    try:
+        if SNR > 13:
+            color = "Red"
+        elif SNR > 12:
+            color = "Yellow"
+        else:
+            color = "Green"
+    finally:
+        color = "<styleUrl>#"+color+"</styleUrl>"
+        return color
 
 def csv2kml(list_data):
     f = open('format.txt', 'r')
@@ -27,7 +27,10 @@ def csv2kml(list_data):
     for list_value in list_data:
         SNR = list_value[11]
         locatedata = [list_value[1],list_value[2],list_value[3]]
-        latlondata = locateformatter(locatedata)
+        if locatedata[0] == "lat":
+            continue
+        else:
+            latlondata = locateformatter(locatedata)
 
         if SNR == "SNR":
             continue
@@ -46,7 +49,7 @@ def opencsv(data):
         return(list)
 
 def exportkml(data):
-    f = open('export.kml', 'w')
+    f = open('./kml/export.kml', 'w')
     f.write(data)
     f.close()
 
