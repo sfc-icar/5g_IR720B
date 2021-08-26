@@ -128,6 +128,22 @@ def all_SNR():
             password='local5g',
             cursorclass=pymysql.cursors.DictCursor)
     with conn.cursor() as cursor:
+        sql = "SELECT lat,lon,alt,SNR FROM gndr_main"
+        cursor.execute(sql)
+        result = cursor.fetchall()
+    enc = json.dumps(result)
+    return enc
+
+@app.route('/all_SNR_old')
+def all_SNR_old():
+    conn = pymysql.connect(
+            host='localhost',
+            user='feles5g',
+            db='5gfeles',
+            charset='utf8mb4',
+            password='local5g',
+            cursorclass=pymysql.cursors.DictCursor)
+    with conn.cursor() as cursor:
         sql = "SELECT lat,lon,alt,SNR FROM gndr"
         cursor.execute(sql)
         result = cursor.fetchall()

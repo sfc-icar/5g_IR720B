@@ -30,12 +30,14 @@ def csv2kml(list_data):
     last = "</Document>\n</kml>\n"
     #====================================================#
     for list_value in list_data:
+        if list_value[0] == None or list_value[1] == None or list_value[2] == None or list_value[3] == None:
+            continue
         locatedata = [list_value[0],list_value[1],list_value[2]]
         SNR = list_value[3]
         latlondata = locateformatter(locatedata)
         color = snrformatter(float(SNR))
-        data = "<Placemark>\n%s\n<Point>\n<altitudeMode>relativeToGround</altitudeMode>\n%s\n</Point>\n</Placemark>\n" % (color,latlondata)
-        meat += data
+        mestdata = "<Placemark>\n%s\n<Point>\n<altitudeMode>relativeToGround</altitudeMode>\n%s\n</Point>\n</Placemark>\n" % (color,latlondata)
+        meat += mestdata
     data = front+meat+last
     return data
 
