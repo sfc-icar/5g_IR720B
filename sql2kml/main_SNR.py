@@ -1,7 +1,7 @@
 import urllib.request
 import json
 
-API_URL = "https://icar-svr.sfc.wide.ad.jp/vggps/all_SNR"
+API_URL = "https://icar-svr.sfc.wide.ad.jp/vggps/all_kml_old"
 
 def locateformatter(locate):
     data = (str(locate[0]) + "," + str(locate[1]) + "," + str(locate[2]))
@@ -10,12 +10,16 @@ def locateformatter(locate):
 
 def snrformatter(SNR):
     try:
-        if SNR > 13:
-            color = "Red"
-        elif SNR > 12:
-            color = "Yellow"
-        else:
+        if SNR > 10:
+            color = "Blue"
+        elif SNR > 5:
             color = "Green"
+        elif SNR > 0:
+            color = "Yellow"
+        elif SNR > -5:
+            color = "Orange"
+        else:
+            color = "Red"
     finally:
         color = "<styleUrl>#"+color+"</styleUrl>"
         return color
@@ -23,7 +27,7 @@ def snrformatter(SNR):
 def csv2kml(list_data):
     #====================================================#
     #KML_format
-    f = open('format.txt', 'r')
+    f = open('format_SNR.txt', 'r')
     front = f.read()
     f.close()
     meat = ""
@@ -51,10 +55,10 @@ def getdata(API_URL):
             data.append([resultone["lon"], resultone["lat"], resultone["alt"],resultone["SNR"]])
         return data
     except:
-        print("err")
+        print("err : connectionERR!!!")
 
 def exportkml(data):
-    f = open('./kml/export.kml', 'w')
+    f = open('./kml/export_SNR.kml', 'w')
     f.write(data)
     f.close()
 
