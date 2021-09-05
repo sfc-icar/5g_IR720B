@@ -1,7 +1,7 @@
 import urllib.request
 import json
 
-API_URL = "https://icar-svr.sfc.wide.ad.jp/vggps/all_kml_old"
+API_URL = "https://icar-svr.sfc.wide.ad.jp/vggps/all_kml"
 
 def locateformatter(locate):
     data = (str(locate[0]) + "," + str(locate[1]) + "," + str(locate[2]))
