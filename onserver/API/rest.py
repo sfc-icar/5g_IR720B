@@ -26,7 +26,7 @@ def snr():
     enc = json.dumps(result)
     return enc
 
-@app.route('/snr/<xyz>', methods=['GET'])
+@app.route('/snr/<string:xyz>', methods=['GET'])
 def snrfind(xyz=None):
     a=[]
     num = re.findall("(.*)to", xyz)
