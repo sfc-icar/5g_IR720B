@@ -2,8 +2,6 @@ from flask import Blueprint, request, abort, jsonify
 import pymysql.cursors
 from flask import Flask
 import json
-from pymongo import DESCENDING
-import pymongo
 
 api = Blueprint('api', __name__, url_prefix='/api')
 
