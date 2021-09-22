@@ -108,12 +108,8 @@ def ssh2text_cli(cmd_result_cli):
 
     def sc_info(ntext):
         global list_rows
-        if "Cell" in ntext:
-            num = re.findall("Cell [(.*)]:", ntext)
-            fnum = [float(n) for n in num]
-            lnum = fnum[0]
+        if "Cell [" in ntext:
             SResultValue.append(ntext)
-            SResultValue.append(lnum)
         elif "Physical Cell ID" in ntext:
             num = re.findall("Physical Cell ID: '(.*)'", ntext)
             fnum = [float(n) for n in num]
@@ -138,12 +134,8 @@ def ssh2text_cli(cmd_result_cli):
 
     def pc_info(ntext):
         global list_rows, pflag
-        if "Cell" in ntext:
-            num = re.findall("Cell [(.*)]:", ntext)
-            fnum = [float(n) for n in num]
-            lnum = fnum[0]
+        if "Cell [" in ntext:
             PResultValue.append(ntext)
-            PResultValue.append(lnum)
         elif "Physical Cell ID" in ntext:
             num = re.findall("Physical Cell ID: '(.*)'", ntext)
             fnum = [float(n) for n in num]
@@ -185,8 +177,11 @@ def ssh2text_cli(cmd_result_cli):
                 sc_info(ntext)
             else:
                 pass
-    except:
-        print("ERR:inside CMD3")
+    except Exception as e:
+        import traceback
+        print("\nエラー情報:")
+        traceback.print_exc()
+        pass
     finally:
         value.append(PResultValue)
         value.append(SResultValue)
@@ -422,3 +417,4 @@ def main():
 
 
 main()
+
