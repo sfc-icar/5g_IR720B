@@ -26,8 +26,9 @@ def snr():
     enc = json.dumps(result)
     return enc
 
-@app.route('/snr/<str:xyz>', methods=['GET'])
-def snrfind(xyz):
+@app.route('/snr/<xyz>', methods=['GET'])
+def snrfind(xyz=None):
+    xyz="35.390168593-35.390168595"
     num = re.findall("(.*)-", xyz)
     fnum = [float(n) for n in num]
     ax = fnum[0]
