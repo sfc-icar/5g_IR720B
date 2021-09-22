@@ -4,8 +4,8 @@ import json
 
 app = Flask(__name__)
 
-@api.route('/xyz', methods=['GET'])
-def list_user():
+@app.route('/snr', methods=['GET'])
+def snr():
     conn = pymysql.connect(
         host='localhost',
         user='feles5g',
@@ -20,15 +20,8 @@ def list_user():
     enc = json.dumps(result)
     return enc
 
-
-#@api.route('/xyz/<int:user_id>', methods=['GET'])
-#def get_user(user_id=None):
-#    user = User.query.filter_by(id=user_id).first()
-#    return jsonify(user.to_dict())
-
-
-@api.errorhandler(400)
-@api.errorhandler(404)
+@app.errorhandler(400)
+@app.errorhandler(404)
 def error_handler(error):
     return jsonify({'error': {
         'code': error.description['code'],
