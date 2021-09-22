@@ -29,9 +29,9 @@ def snr():
 @app.route('/snr/<xyz>', methods=['GET'])
 def snrfind(xyz=None):
     a=[]
-    num = re.findall("(.*)-", xyz)
+    num = re.findall("(.*)to", xyz)
     a.append(num[0])
-    num = re.findall("-(.*)", xyz)
+    num = re.findall("to(.*)", xyz)
     a.append(num[0])
     conn = pymysql.connect(
         host='localhost',
