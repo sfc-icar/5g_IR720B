@@ -4,6 +4,12 @@ import json
 
 app = Flask(__name__)
 
+@app.route('/test')
+def test():
+    alivetext="i`m not dead"
+    return alivetext
+
+
 @app.route('/snr', methods=['GET'])
 def snr():
     conn = pymysql.connect(
