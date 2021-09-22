@@ -26,8 +26,10 @@ def snr():
     enc = json.dumps(result)
     return enc
 
-@app.route('/snr/<int:ax & int:bx>', methods=['GET'])
+@app.route('/snr/<ax>&<bx>', methods=['GET'])
 def snrfind(ax=None,bx=None):
+    ax = request.args.get("ax", default=0, type=float)
+    ax = request.args.get("bx", default=0, type=float)
     a=[ax,bx]
     conn = pymysql.connect(
         host='localhost',
