@@ -28,13 +28,14 @@ def snr():
 
 @app.route('/snr/<xyz>', methods=['GET'])
 def snrfind(xyz=None):
+    a=[]
     xyz="35.390168593-35.390168595"
     num = re.findall("(.*)-", xyz)
-    fnum = [float(n) for n in num]
-    ax = fnum[0]
+    fnum = [str(n) for n in num]
+    a[0] = fnum[0]
     num = re.findall("-(.*)", xyz)
-    fnum = [float(n) for n in num]
-    ay = fnum[0]
+    fnum = [str(n) for n in num]
+    a[1] = fnum[0]
     conn = pymysql.connect(
         host='localhost',
         user='feles5g',
@@ -43,8 +44,8 @@ def snrfind(xyz=None):
         password='local5g',
         cursorclass=pymysql.cursors.DictCursor)
     with conn.cursor() as cursor:
-        sql = "SELECT lat,lon,alt,SNR FROM gndr_main where %f < lat and lat < %f"
-        cursor.execute(sql,ax,ay)
+        sql = "SELECT lat,lon,alt,SNR FROM gndr_main where %s < lat and lat < %s ;"
+        cursor.execute(sql,(a[0],a[1]))
         result = cursor.fetchall()
     enc = json.dumps(result)
     return enc
