@@ -118,7 +118,7 @@ def all_wip():
     enc = json.dumps(result)
     return enc
 
-@app.route('/all_SNR')
+@app.route('/all_kml')
 def all_SNR():
     conn = pymysql.connect(
             host='localhost',
@@ -128,13 +128,13 @@ def all_SNR():
             password='local5g',
             cursorclass=pymysql.cursors.DictCursor)
     with conn.cursor() as cursor:
-        sql = "SELECT lat,lon,alt,SNR FROM gndr_main"
+        sql = "SELECT lat,lon,alt,SNR,RSRP FROM gndr_main"
         cursor.execute(sql)
         result = cursor.fetchall()
     enc = json.dumps(result)
     return enc
 
-@app.route('/all_SNR_old')
+@app.route('/all_kml_old')
 def all_SNR_old():
     conn = pymysql.connect(
             host='localhost',
@@ -144,7 +144,7 @@ def all_SNR_old():
             password='local5g',
             cursorclass=pymysql.cursors.DictCursor)
     with conn.cursor() as cursor:
-        sql = "SELECT lat,lon,alt,SNR FROM gndr"
+        sql = "SELECT lat,lon,alt,SNR,RSRP FROM gndr"
         cursor.execute(sql)
         result = cursor.fetchall()
     enc = json.dumps(result)
