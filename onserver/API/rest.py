@@ -28,10 +28,11 @@ def snr():
 
 @app.route('/snr/<str:xyz>', methods=['GET'])
 def snrfind(xyz=None):
-    num = re.findall("'(.*)'-", xyz)
+    xyz="35.390168593-35.390168595"
+    num = re.findall("(.*)-", xyz)
     fnum = [float(n) for n in num]
     ax = fnum[0]
-    num = re.findall("-'(.*)'", xyz)
+    num = re.findall("-(.*)", xyz)
     fnum = [float(n) for n in num]
     ay = fnum[0]
     conn = pymysql.connect(
