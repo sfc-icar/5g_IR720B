@@ -27,8 +27,7 @@ def snr():
     return enc
 
 @app.route('/snr/<str:xyz>', methods=['GET'])
-def snrfind(xyz=None):
-    xyz="35.390168593-35.390168595"
+def snrfind(xyz):
     num = re.findall("(.*)-", xyz)
     fnum = [float(n) for n in num]
     ax = fnum[0]
