@@ -1,9 +1,8 @@
-from flask import Blueprint, request, abort, jsonify
+from flask import Blueprint, request, abort, jsonify,Flask
 import pymysql.cursors
-from flask import Flask
 import json
 
-api = Blueprint('api', __name__, url_prefix='/api')
+app = Flask(__name__)
 
 @api.route('/xyz', methods=['GET'])
 def list_user():
