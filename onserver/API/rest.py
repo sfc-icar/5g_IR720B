@@ -10,8 +10,8 @@ def test():
     return alivetext
 
 
-@app.route('/snr', methods=['GET'])
-def snr():
+@app.route('/snrall', methods=['GET'])
+def snrall():
     conn = pymysql.connect(
         host='localhost',
         user='feles5g',
@@ -26,10 +26,10 @@ def snr():
     enc = json.dumps(result)
     return enc
 
-@app.route('/snr/<ax>&<bx>', methods=['GET'])
+@app.route('/snrfind', methods=['GET'])
 def snrfind(ax=None,bx=None):
-    ax = request.args.get("ax", default=0, type=float)
-    ax = request.args.get("bx", default=0, type=float)
+    ax = float(request.args.get('ax', 0))
+    bx = float(request.args.get('bx', 1))
     a=[ax,bx]
     conn = pymysql.connect(
         host='localhost',
