@@ -26,7 +26,7 @@ def snrall():
     return enc
 
 @app.route('/xyfind', methods=['GET'])
-def snrfind(ax=None,bx=None):
+def snrfind(ax=None,bx=None,ay=None,by=None):
     ax = float(request.args.get('ax', 0))
     bx = float(request.args.get('bx', 1))
     ay = float(request.args.get('ay', 0))
