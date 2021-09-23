@@ -4,6 +4,8 @@ import json
 import numpy as np
 app = Flask(__name__)
 
+width=0.0000001
+
 @app.route('/test')
 def test():
     alivetext="i`m not dead!!"
@@ -16,9 +18,9 @@ def makeave(ax=None,bx=None,ay=None,by=None):
     #ay = request.args.get('ay', 0)
     #by = request.args.get('by', 1)
     ax = str(35.390168593)
-    bx = str(35.390169595)
+    bx = str(35.391169595)
     ay = str(139.426184615)
-    by = str(139.426484620)
+    by = str(139.427484620)
     url=makeurl(ax,bx,ay,by)
     data=getdata(url)
     avedata=changeave(data)
@@ -26,17 +28,28 @@ def makeave(ax=None,bx=None,ay=None,by=None):
     return enc
 
 def changeave(data):
-    max=np.max(data, axis=0)
-    min=np.min(data, axis=0)
-    maxlat=(max[0])
-    minlat=(min[0])
-    maxlon=(max[1])
-    minlon=(min[1])
-    for i in data:
+    avedata=[]
+    avelist=[]
+    sorted_data=makesorteddata(data)
+    lat=sorted_data[0][0]
+    lon=sorted_data[0][1]
+    maxlat=sorted_data[-1][0]
+    maxlon=sorted_data[-1][1]
+    for i in sorted_data:
+        print(i)
+        lat=lat+width
         if lat > i[0]:
+            lon=lon+width
             if lon > i[1]:
-                data.append(i[2])
-    return(maxlat)
+                print(i)
+                avelist.append(i[2])
+            print(avelist)
+            #avedata.append(np.mean(avelist, axis=1))
+    return(avelist)
+
+def makesorteddata(data):
+    sorted_data = sorted(data, key=lambda x:(x[0], x[1]))
+    return sorted_data
 
 def makeurl(ax,bx,ay,by):
     url="https://icar-svr.sfc.wide.ad.jp/vgrest/xyfind?ax="+ax+"&bx="+bx+"&ay="+ay+"&by="+by
