@@ -4,7 +4,7 @@ import json
 import numpy as np
 app = Flask(__name__)
 
-width=0.0000001
+width=0.00001
 
 @app.route('/test')
 def test():
@@ -18,9 +18,9 @@ def makeave(ax=None,bx=None,ay=None,by=None):
     #ay = request.args.get('ay', 0)
     #by = request.args.get('by', 1)
     ax = str(35.390168593)
-    bx = str(35.391169595)
+    bx = str(35.390469595)
     ay = str(139.426184615)
-    by = str(139.427484620)
+    by = str(139.426585620)
     url=makeurl(ax,bx,ay,by)
     data=getdata(url)
     avedata=changeave(data)
@@ -28,7 +28,8 @@ def makeave(ax=None,bx=None,ay=None,by=None):
     return enc
 
 def changeave(data):
-    avedata=[]
+    ave1ddata=[]
+    ave2ddata=[]
     avelist=[]
     sorted_data=makesorteddata(data)
     lat=sorted_data[0][0]
@@ -36,16 +37,19 @@ def changeave(data):
     maxlat=sorted_data[-1][0]
     maxlon=sorted_data[-1][1]
     for i in sorted_data:
-        print(i)
-        lat=lat+width
-        if lat > i[0]:
-            lon=lon+width
-            if lon > i[1]:
-                print(i)
+        if lat >= i[0]:
+            if lon >= i[1]:
                 avelist.append(i[2])
-            print(avelist)
-            #avedata.append(np.mean(avelist, axis=1))
-    return(avelist)
+            else:
+                ave1ddata.append(lat)
+                ave1ddata.append(lon)
+                ave1ddata.append(np.mean(avelist, axis=0))
+                ave2ddata.append(ave1ddata)
+                ave1ddata=[]
+                lon=lon+width
+        else:
+            lat=lat+width
+    return(ave2ddata)
 
 def makesorteddata(data):
     sorted_data = sorted(data, key=lambda x:(x[0], x[1]))
