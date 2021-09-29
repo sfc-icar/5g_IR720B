@@ -1,13 +1,13 @@
 import json
 import os
+import urllib.request
 
 import numpy as np
-from flask import make_response
-from flask import request, Flask
+from flask import make_response, request, Flask
 
 app = Flask(__name__)
 
-width = 0.00001
+width = 0.0000000001
 
 
 def locateformatter(locate):
@@ -36,7 +36,8 @@ def snrformatter(SNR):
 def json2kml(list_data):
     # ====================================================#
     # KML_format
-    f = open('/var/www/html/flask/vgave/json2ave/format_SNR.txt', 'r')
+    # f = open('/var/www/html/flask/vgave/json2ave/format_SNR.txt', 'r')
+    f = open('format_SNR.txt', 'r')
     front = f.read()
     f.close()
     meat = ""
@@ -69,7 +70,6 @@ def changeave(data):
             if lon >= i[1]:
                 avealt.append(i[2])
                 avesnr.append(i[3])
-
             else:
                 ave1ddata.append(lat)
                 ave1ddata.append(lon)
@@ -90,7 +90,6 @@ def makesorteddata(data):
 
 def makeurl(ax, bx, ay, by):
     url = "https://icar-svr.sfc.wide.ad.jp/vgrest/xyfind?ax=" + ax + "&bx=" + bx + "&ay=" + ay + "&by=" + by
-    # url = "https://icar-svr.sfc.wide.ad.jp/vgrest/xyall"
     return url
 
 
@@ -105,6 +104,7 @@ def getdata(API_URL):
         return data
     except:
         print("err : connectionERR!!!")
+        return 0
 
 
 def download(procedata):
@@ -126,10 +126,6 @@ def makeave(ax=None, bx=None, ay=None, by=None):
     bx = request.args.get('bx', 1)
     ay = request.args.get('ay', 0)
     by = request.args.get('by', 1)
-    ax = str(35.390168593)
-    bx = str(35.390469595)
-    ay = str(139.426184615)
-    by = str(139.426585620)
     url = makeurl(ax, bx, ay, by)
     data = getdata(url)
     avedata = changeave(data)

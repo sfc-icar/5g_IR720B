@@ -1,5 +1,5 @@
-import urllib.request
 import json
+import urllib.request
 
 API_URL = "https://icar-svr.sfc.wide.ad.jp/vggps/all_kml"
 
