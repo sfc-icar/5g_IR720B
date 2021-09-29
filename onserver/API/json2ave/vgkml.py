@@ -1,6 +1,9 @@
 import json
+import os
+
 import numpy as np
-from flask import Flask, make_response,request
+from flask import make_response
+from flask import request, Flask
 
 app = Flask(__name__)
 
@@ -87,7 +90,7 @@ def makesorteddata(data):
 
 def makeurl(ax, bx, ay, by):
     url = "https://icar-svr.sfc.wide.ad.jp/vgrest/xyfind?ax=" + ax + "&bx=" + bx + "&ay=" + ay + "&by=" + by
-    url = "https://icar-svr.sfc.wide.ad.jp/vgrest/xyall"
+    # url = "https://icar-svr.sfc.wide.ad.jp/vgrest/xyall"
     return url
 
 

@@ -1,11 +1,13 @@
-from flask import Blueprint, request, abort, jsonify,Flask
+from flask import Blueprint, request, abort, jsonify, Flask
 import pymysql.cursors
 import json
+
 app = Flask(__name__)
+
 
 @app.route('/test')
 def test():
-    alivetext="i`m not dead!!"
+    alivetext = "i`m not dead!!"
     return alivetext
 
 
@@ -25,13 +27,14 @@ def snrall():
     enc = json.dumps(result)
     return enc
 
+
 @app.route('/xyfind', methods=['GET'])
-def snrfind(ax=None,bx=None,ay=None,by=None):
+def snrfind(ax=None, bx=None, ay=None, by=None):
     ax = float(request.args.get('ax', 0))
     bx = float(request.args.get('bx', 1))
     ay = float(request.args.get('ay', 0))
     by = float(request.args.get('by', 1))
-    a=[ax,bx,ay,by]
+    a = [ax, bx, ay, by]
     conn = pymysql.connect(
         host='localhost',
         user='feles5g',
@@ -41,10 +44,11 @@ def snrfind(ax=None,bx=None,ay=None,by=None):
         cursorclass=pymysql.cursors.DictCursor)
     with conn.cursor() as cursor:
         sql = "SELECT lat,lon,alt,SNR,RSRP FROM gndr_main where %s < lat and lat < %s and %s < lon and lon < %s ;"
-        cursor.execute(sql,(a[0],a[1],a[2],a[3]))
+        cursor.execute(sql, (a[0], a[1], a[2], a[3]))
         result = cursor.fetchall()
     enc = json.dumps(result)
     return enc
+
 
 @app.errorhandler(400)
 @app.errorhandler(404)
