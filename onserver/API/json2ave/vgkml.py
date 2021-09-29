@@ -14,8 +14,9 @@ def test():
     return alivetext
 
 
-@app.route('/ave', methods=['GET'])
-def makeave(ax=None, bx=None, ay=None, by=None):
+@app.route('/snrave', methods=['GET'])
+def makeave():
+    # ax=None, bx=None, ay=None, by=None
     # ax = request.args.get('ax', 0)
     # bx = request.args.get('bx', 1)
     # ay = request.args.get('ay', 0)
@@ -134,3 +135,5 @@ def error_handler(error):
         'code': error.description['code'],
         'message': error.description['message']
     }}), error.code
+
+print(makeave(35.390168593,35.390168595,139.426184615,139.426484620))
