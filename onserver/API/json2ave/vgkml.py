@@ -32,6 +32,7 @@ def snrformatter(SNR):
         color = "<styleUrl>#" + color + "</styleUrl>"
         return color
 
+
 def json2kml(list_data):
     # ====================================================#
     # KML_format
@@ -105,6 +106,7 @@ def getdata(API_URL):
     except:
         print("err : connectionERR!!!")
 
+
 def download(procedata):
     response = make_response()
     response.data = procedata
@@ -136,10 +138,6 @@ def makeave(ax=None, bx=None, ay=None, by=None):
     return enc
 
 
-@app.errorhandler(400)
-@app.errorhandler(404)
-def error_handler(error):
-    return jsonify({'error': {
-        'code': error.description['code'],
-        'message': error.description['message']
-    }}), error.code
+if __name__ == "__main__":
+    port = os.getenv("PORT")
+    app.run(host="0.0.0.0", port=port)
