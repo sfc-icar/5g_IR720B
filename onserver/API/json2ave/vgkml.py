@@ -1,36 +1,13 @@
-from flask import Blueprint, request, abort, jsonify, Flask, make_response
-import urllib.request
 import json
+import urllib.request
+
 import numpy as np
+from flask import jsonify, Flask
 
 app = Flask(__name__)
 
 width = 0.00001
 
-
-@app.route('/test')
-def test():
-    alivetext = "i`m not dead!!"
-    return alivetext
-
-
-@app.route('/snrave', methods=['GET'])
-def makeave():
-    # ax=None, bx=None, ay=None, by=None
-    # ax = request.args.get('ax', 0)
-    # bx = request.args.get('bx', 1)
-    # ay = request.args.get('ay', 0)
-    # by = request.args.get('by', 1)
-    ax = str(35.390168593)
-    bx = str(35.390469595)
-    ay = str(139.426184615)
-    by = str(139.426585620)
-    url = makeurl(ax, bx, ay, by)
-    data = getdata(url)
-    avedata = changeave(data)
-    procedata = json2kml(avedata)
-    enc = json.dumps(procedata)
-    return enc
 
 def locateformatter(locate):
     data = (str(locate[0]) + "," + str(locate[1]) + "," + str(locate[2]))
@@ -72,7 +49,7 @@ def json2kml(list_data):
         latlondata = locateformatter(locatedata)
         color = snrformatter(float(SNR))
         mestdata = "<Placemark>\n%s\n<Point>\n<altitudeMode>relativeToGround</altitudeMode>\n%s\n</Point>\n</Placemark>\n" % (
-        color, latlondata)
+            color, latlondata)
         meat += mestdata
     data = front + meat + last
     return data
@@ -128,6 +105,31 @@ def getdata(API_URL):
         print("err : connectionERR!!!")
 
 
+@app.route('/test')
+def test():
+    alivetext = "i`m not dead!!"
+    return alivetext
+
+
+@app.route('/snrave', methods=['GET'])
+def makeave():
+    # ax=None, bx=None, ay=None, by=None
+    # ax = request.args.get('ax', 0)
+    # bx = request.args.get('bx', 1)
+    # ay = request.args.get('ay', 0)
+    # by = request.args.get('by', 1)
+    ax = str(35.390168593)
+    bx = str(35.390469595)
+    ay = str(139.426184615)
+    by = str(139.426585620)
+    url = makeurl(ax, bx, ay, by)
+    data = getdata(url)
+    avedata = changeave(data)
+    procedata = json2kml(avedata)
+    enc = json.dumps(procedata)
+    return enc
+
+
 @app.errorhandler(400)
 @app.errorhandler(404)
 def error_handler(error):
@@ -136,4 +138,5 @@ def error_handler(error):
         'message': error.description['message']
     }}), error.code
 
-print(makeave(35.390168593,35.390168595,139.426184615,139.426484620))
+
+print(makeave(35.390168593, 35.390168595, 139.426184615, 139.426484620))
