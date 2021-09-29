@@ -31,7 +31,6 @@ def snrformatter(SNR):
     finally:
         color = "<styleUrl>#" + color + "</styleUrl>"
         return color
-/var/www/html/flask/vgave/json2ave
 
 def json2kml(list_data):
     # ====================================================#
@@ -90,6 +89,7 @@ def makesorteddata(data):
 
 def makeurl(ax, bx, ay, by):
     url = "https://icar-svr.sfc.wide.ad.jp/vgrest/xyfind?ax=" + ax + "&bx=" + bx + "&ay=" + ay + "&by=" + by
+    url = "https://icar-svr.sfc.wide.ad.jp/vgrest/xyall"
     return url
 
 
@@ -143,5 +143,3 @@ def error_handler(error):
         'code': error.description['code'],
         'message': error.description['message']
     }}), error.code
-
-# print(makeave())
