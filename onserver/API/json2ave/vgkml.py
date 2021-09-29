@@ -28,18 +28,8 @@ def makeave(ax=None, bx=None, ay=None, by=None):
     data = getdata(url)
     avedata = changeave(data)
     procedata = json2kml(avedata)
-    response = download(procedata)
-    # enc = json.dumps(procedata)
-    return response
-
-def download(procedata):
-    response = make_response()
-    response.data = procedata
-    downloadFileName = 'snr-ave.kml'
-    response.headers['Content-Disposition'] = 'attachment; filename=' + downloadFileName
-    response.mimetype = "text/kml"
-    return response
-
+    enc = json.dumps(procedata)
+    return enc
 
 def locateformatter(locate):
     data = (str(locate[0]) + "," + str(locate[1]) + "," + str(locate[2]))
@@ -144,6 +134,3 @@ def error_handler(error):
         'code': error.description['code'],
         'message': error.description['message']
     }}), error.code
-
-
-print(makeave())
