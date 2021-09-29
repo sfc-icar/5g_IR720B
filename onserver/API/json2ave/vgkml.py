@@ -31,12 +31,12 @@ def snrformatter(SNR):
     finally:
         color = "<styleUrl>#" + color + "</styleUrl>"
         return color
-
+/var/www/html/flask/vgave/json2ave
 
 def json2kml(list_data):
     # ====================================================#
     # KML_format
-    f = open('https://icar-svr.sfc.wide.ad.jp/vgkml/snrave/format_SNR.txt', 'r')
+    f = open('/var/www/html/flask/vgave/json2ave/format_SNR.txt', 'r')
     front = f.read()
     f.close()
     meat = ""
@@ -119,12 +119,11 @@ def test():
 
 
 @app.route('/snrave', methods=['GET'])
-def makeave():
-    # ax=None, bx=None, ay=None, by=None
-    # ax = request.args.get('ax', 0)
-    # bx = request.args.get('bx', 1)
-    # ay = request.args.get('ay', 0)
-    # by = request.args.get('by', 1)
+def makeave(ax=None, bx=None, ay=None, by=None):
+    ax = request.args.get('ax', 0)
+    bx = request.args.get('bx', 1)
+    ay = request.args.get('ay', 0)
+    by = request.args.get('by', 1)
     ax = str(35.390168593)
     bx = str(35.390469595)
     ay = str(139.426184615)
