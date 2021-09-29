@@ -2,7 +2,8 @@ import json
 import urllib.request
 
 import numpy as np
-from flask import jsonify, Flask
+from flask import Flask, make_response
+from flask import jsonify
 
 app = Flask(__name__)
 
@@ -35,7 +36,7 @@ def snrformatter(SNR):
 def json2kml(list_data):
     # ====================================================#
     # KML_format
-    f = open('format_SNR.txt', 'r')
+    f = open('https://icar-svr.sfc.wide.ad.jp/vgkml/snrave/format_SNR.txt', 'r')
     front = f.read()
     f.close()
     meat = ""
@@ -104,6 +105,13 @@ def getdata(API_URL):
     except:
         print("err : connectionERR!!!")
 
+def download(procedata):
+    response = make_response()
+    response.data = procedata
+    response.headers['Content-Type'] = 'application/octet-stream'
+    response.headers['Content-Disposition'] = 'attachment; filename=snr.kml'
+    return response
+
 
 @app.route('/test')
 def test():
@@ -125,7 +133,7 @@ def makeave():
     data = getdata(url)
     avedata = changeave(data)
     procedata = json2kml(avedata)
-    enc = json.dumps(procedata)
+    enc = download(procedata)
     return enc
 
 
@@ -137,5 +145,4 @@ def error_handler(error):
         'message': error.description['message']
     }}), error.code
 
-
- # print(makeave())
+# print(makeave())
