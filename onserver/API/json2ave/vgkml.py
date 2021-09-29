@@ -1,8 +1,6 @@
 import json
-import urllib.request
-from urllib import request
 import numpy as np
-from flask import Flask, make_response
+from flask import Flask, make_response,request
 
 app = Flask(__name__)
 
