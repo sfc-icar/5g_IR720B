@@ -29,12 +29,13 @@ def snrall():
 
 
 @app.route('/xyfind', methods=['GET'])
-def snrfind(ax=None, bx=None, ay=None, by=None):
+def snrfind(ax=None, bx=None, ay=None, by=None, alt=None):
     ax = float(request.args.get('ax', 0))
     bx = float(request.args.get('bx', 1))
     ay = float(request.args.get('ay', 0))
     by = float(request.args.get('by', 1))
-    a = [ax, bx, ay, by]
+    alt = float(request.args.get('alt', 1))
+    a = [ax, bx, ay, by, alt, alt + 49]
     conn = pymysql.connect(
         host='localhost',
         user='feles5g',
@@ -43,8 +44,8 @@ def snrfind(ax=None, bx=None, ay=None, by=None):
         password='local5g',
         cursorclass=pymysql.cursors.DictCursor)
     with conn.cursor() as cursor:
-        sql = "SELECT lat,lon,alt,SNR,RSRP FROM gndr_main where %s < lat and lat < %s and %s < lon and lon < %s ;"
-        cursor.execute(sql, (a[0], a[1], a[2], a[3]))
+        sql = "SELECT lat,lon,alt,SNR,RSRP FROM gndr_main where %s < lat and lat < %s and %s < lon and lon < %s and %s <= alt and alt <= %s;"
+        cursor.execute(sql, (a[0], a[1], a[2], a[3], a[4], a[5]))
         result = cursor.fetchall()
     enc = json.dumps(result)
     return enc

@@ -7,7 +7,7 @@ from flask import make_response, request, Flask
 
 app = Flask(__name__)
 
-width = 0.0000000001
+width = 0.0005
 
 
 def locateformatter(locate):
@@ -58,46 +58,12 @@ def json2kml(list_data):
 
 
 def changeave(data):
-    sorted_data = makesorteddata(data)
-    ave2ddata = ave(sorted_data)
-    return (ave2ddata)
-
-
-def ave(sorted_data):
     ave1ddata = []
-    ave2ddata = []
-    avealt = []
     avesnr = []
-    lat = sorted_data[0][0]
-    lon = sorted_data[0][1]
-    for i in sorted_data:
-        if lat >= i[0]:
-            if lon >= i[1]:
-                avealt.append(i[2])
-                avesnr.append(i[3])
-            else:
-                ave1ddata.append(lat)
-                ave1ddata.append(lon)
-                ave1ddata.append(np.mean(avealt, axis=0))
-                ave1ddata.append(np.mean(avesnr, axis=0))
-                ave2ddata.append(ave1ddata)
-                ave1ddata = []
-                lat = sorted_data[0][0]
-                lon = lon + width
-        else:
-            lat = lat + width
-    return ave2ddata
-
-
-def makesorteddata(data):
-    sorted_data = sorted(data, key=lambda x: (x[0], x[1]))
-    return sorted_data
-
-
-def makeurl(ax, bx, ay, by):
-    url = "https://icar-svr.sfc.wide.ad.jp/vgrest/xyfind?ax=" + ax + "&bx=" + bx + "&ay=" + ay + "&by=" + by
-    return url
-
+    for i in data:
+        avesnr.append(i[3])
+    ave1ddata.append(np.mean(avesnr, axis=0))
+    return ave1ddata
 
 def getdata(API_URL):
     data = []
@@ -121,20 +87,60 @@ def download(procedata):
     return response
 
 
+def makeurl(ax, bx, ay, by, alt):
+    url = "https://icar-svr.sfc.wide.ad.jp/vgrest/xyfind?ax=" + str(ax) + "&bx=" + str(bx) + "&ay=" + str(
+        ay) + "&by=" + str(by) + "&alt=" + str(alt)
+    return url
+
+
+def get(ax, ay, bx, by):
+    ax = float(ax)
+    ay = float(ay)
+    bx = float(bx)
+    by = float(by)
+    startx = ax
+    starty = ay
+    xlist = []
+    ylist = []
+    avedata = []
+    alt = 0
+    count = 0
+    while startx < bx:
+        startx += width
+        xlist.append(startx)
+    while starty < by:
+        starty += width
+        ylist.append(starty)
+    print(len(xlist))
+    while alt < 150:
+        for x in xlist:
+            for y in ylist:
+                url = makeurl(x - width, x, y - width, y, alt)
+                data = getdata(url)
+                if data:
+                    oneavelist = [y - width, x - width, alt]
+                    oneavelist[len(oneavelist):len(oneavelist)] = changeave(data)
+                    avedata.append(oneavelist)
+                    oneavelist = []
+            count += 1
+            print(count)
+        alt += 50
+    print(avedata)
+    return avedata
+
+
 @app.route('/test')
 def test():
     return "i`m not dead!!"
 
 
 @app.route('/snrave', methods=['GET'])
-def makeave(ax=None, bx=None, ay=None, by=None):
+def makeave(ax=None, ay=None, bx=None, by=None):
     ax = request.args.get('ax', 0)
-    bx = request.args.get('bx', 1)
     ay = request.args.get('ay', 0)
+    bx = request.args.get('bx', 1)
     by = request.args.get('by', 1)
-    url = makeurl(ax, bx, ay, by)
-    data = getdata(url)
-    avedata = changeave(data)
+    avedata = get(ax, ay, bx, by)
     procedata = json2kml(avedata)
     enc = download(procedata)
     return enc
