@@ -123,7 +123,8 @@ def download(procedata):
 
 @app.route('/test')
 def test():
-    return "i`m not dead!!"
+    enc = json.dumps("i`m not dead!!")
+    return enc
 
 
 @app.route('/snrave', methods=['GET'])
