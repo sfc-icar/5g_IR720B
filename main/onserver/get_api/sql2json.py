@@ -50,6 +50,21 @@ def snrfind(ax=None, bx=None, ay=None, by=None, alt=None):
     enc = json.dumps(result)
     return enc
 
+@app.route('/one')
+def one():
+    conn = pymysql.connect(
+            host='localhost',
+            user='feles5g',
+            db='5gfeles',
+            charset='utf8mb4',
+            password='local5g',
+            cursorclass=pymysql.cursors.DictCursor)
+    with conn.cursor() as cursor:
+        sql = "SELECT * FROM gndr_main order by time desc limit 1"
+        cursor.execute(sql)
+        result = cursor.fetchall()
+    enc = json.dumps(result[0])
+    return enc
 
 @app.errorhandler(400)
 @app.errorhandler(404)

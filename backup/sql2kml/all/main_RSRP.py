@@ -8,15 +8,15 @@ def locateformatter(locate):
     latlondata = ("<coordinates>" + data + "</coordinates>")
     return latlondata
 
-def snrformatter(SNR):
+def rsrpformatter(RSRP):
     try:
-        if SNR > 10:
+        if RSRP > -80:
             color = "Blue"
-        elif SNR > 5:
+        elif RSRP > -90:
             color = "Green"
-        elif SNR > 0:
+        elif RSRP > -100:
             color = "Yellow"
-        elif SNR > -5:
+        elif RSRP > -110:
             color = "Orange"
         else:
             color = "Red"
@@ -27,7 +27,7 @@ def snrformatter(SNR):
 def csv2kml(list_data):
     #====================================================#
     #KML_format
-    f = open('format_SNR.txt', 'r')
+    f = open('format_RSRP.txt', 'r')
     front = f.read()
     f.close()
     meat = ""
@@ -37,9 +37,9 @@ def csv2kml(list_data):
         if list_value[0] == None or list_value[1] == None or list_value[2] == None or list_value[3] == None:
             continue
         locatedata = [list_value[0],list_value[1],list_value[2]]
-        SNR = list_value[3]
+        rsrp = list_value[3]
         latlondata = locateformatter(locatedata)
-        color = snrformatter(float(SNR))
+        color = rsrpformatter(float(rsrp))
         mestdata = "<Placemark>\n%s\n<Point>\n<altitudeMode>relativeToGround</altitudeMode>\n%s\n</Point>\n</Placemark>\n" % (color,latlondata)
         meat += mestdata
     data = front+meat+last
@@ -52,13 +52,13 @@ def getdata(API_URL):
             result = f.read().decode('utf-8')
             json_dict = json.loads(result)
         for resultone in json_dict:
-            data.append([resultone["lon"], resultone["lat"], resultone["alt"],resultone["SNR"]])
+            data.append([resultone["lon"], resultone["lat"], resultone["alt"],resultone["RSRP"]])
         return data
     except:
         print("err : connectionERR!!!")
 
 def exportkml(data):
-    f = open('./kml/export_SNR.kml', 'w')
+    f = open('kml/export_RSRP.kml', 'w')
     f.write(data)
     f.close()
 

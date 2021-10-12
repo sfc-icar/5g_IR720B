@@ -49,7 +49,7 @@ def opencsv(data):
         return(list)
 
 def exportkml(data):
-    f = open('./kml/export.kml', 'w')
+    f = open('kml/export.kml', 'w')
     f.write(data)
     f.close()
 
