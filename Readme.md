@@ -1,20 +1,15 @@
 # IR270Bを用いた実験用
 
-本体  
- ` ` `
-/r2j2s/main.py
- ` ` `
 
 ICAR-SVR上で動かすもの(systemctl status vggps)  
  ` ` `
-/onserver/deamon.py
+/main/onserver/
  ` ` `
 
-IR270Bのsshのテスト用  
+raspi or jetsonで稼働させるもの  
  ` ` `
-/r2j2s/onlyssh.py
+/main/r2j2s/main.py
  ` ` `
 
  全てpython3系で動きます。  
  ask:feles@sfc.wide.ad.jp
-
