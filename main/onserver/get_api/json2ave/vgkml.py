@@ -65,6 +65,7 @@ def changeave(data):
     ave1ddata.append(np.mean(avesnr, axis=0))
     return ave1ddata
 
+
 def getdata(API_URL):
     data = []
     try:
@@ -131,7 +132,8 @@ def get(ax, ay, bx, by):
 
 @app.route('/test')
 def test():
-    return "i`m not dead!!"
+    enc = json.dumps("i`m not dead!!")
+    return enc
 
 
 @app.route('/snrave', methods=['GET'])
