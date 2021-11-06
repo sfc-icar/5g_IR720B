@@ -37,7 +37,10 @@ def json2kml(list_data, state):
     # ====================================================#
     # KML_format
     # f = open('/var/www/html/flask/vgave/json2ave/format_SNR.txt', 'r')
-    f = open('format_SNR.txt', 'r')
+    if state == "SNR":
+        f = open('format_SNR.txt', 'r')
+    elif state == "RSRP":
+        f = open('format_RSRP.txt', 'r')
     front = f.read()
     f.close()
     meat = ""
@@ -135,8 +138,9 @@ def get(ax, ay, bx, by, state):
 
 
 @app.route('/test')
-def test():
-    enc = json.dumps("i`m not dead!!")
+def test(state=None):
+    state = request.args.get('state', "None")
+    enc = json.dumps(state)
     return enc
 
 
@@ -154,5 +158,6 @@ def makeave(ax=None, ay=None, bx=None, by=None, state=None):
 
 
 if __name__ == "__main__":
-    port = os.getenv("PORT")
+    #port = os.getenv("PORT")
+    port = 5432
     app.run(host="0.0.0.0", port=port)
