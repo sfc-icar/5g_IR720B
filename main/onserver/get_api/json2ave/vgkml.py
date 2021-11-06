@@ -158,6 +158,6 @@ def makeave(ax=None, ay=None, bx=None, by=None, state=None):
 
 
 if __name__ == "__main__":
-    #port = os.getenv("PORT")
-    port = 5432
+    port = os.getenv("PORT")
+    #port = 5432
     app.run(host="0.0.0.0", port=port)
