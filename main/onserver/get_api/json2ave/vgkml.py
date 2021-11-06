@@ -33,7 +33,7 @@ def snrformatter(SNR):
         return color
 
 
-def json2kml(list_data):
+def json2kml(list_data, state):
     # ====================================================#
     # KML_format
     # f = open('/var/www/html/flask/vgave/json2ave/format_SNR.txt', 'r')
@@ -66,14 +66,18 @@ def changeave(data):
     return ave1ddata
 
 
-def getdata(API_URL):
+def getdata(API_URL, state):
     data = []
     try:
         with urllib.request.urlopen(API_URL) as f:
             result = f.read().decode('utf-8')
             json_dict = json.loads(result)
-        for resultone in json_dict:
-            data.append([resultone["lon"], resultone["lat"], resultone["alt"], resultone["SNR"]])
+        if state == "SNR":
+            for resultone in json_dict:
+                data.append([resultone["lon"], resultone["lat"], resultone["alt"], resultone["SNR"]])
+        elif state == "RSRP":
+            for resultone in json_dict:
+                data.append([resultone["lon"], resultone["lat"], resultone["alt"], resultone["RSRP"]])
         return data
     except:
         print("err : connectionERR!!!")
@@ -94,7 +98,7 @@ def makeurl(ax, bx, ay, by, alt):
     return url
 
 
-def get(ax, ay, bx, by):
+def get(ax, ay, bx, by, state):
     ax = float(ax)
     ay = float(ay)
     bx = float(bx)
@@ -117,7 +121,7 @@ def get(ax, ay, bx, by):
         for x in xlist:
             for y in ylist:
                 url = makeurl(x - width, x, y - width, y, alt)
-                data = getdata(url)
+                data = getdata(url, state)
                 if data:
                     oneavelist = [y - width, x - width, alt]
                     oneavelist[len(oneavelist):len(oneavelist)] = changeave(data)
@@ -136,14 +140,15 @@ def test():
     return enc
 
 
-@app.route('/snrave', methods=['GET'])
-def makeave(ax=None, ay=None, bx=None, by=None):
+@app.route('/ave', methods=['GET'])
+def makeave(ax=None, ay=None, bx=None, by=None, state=None):
     ax = request.args.get('ax', 0)
     ay = request.args.get('ay', 0)
     bx = request.args.get('bx', 1)
     by = request.args.get('by', 1)
-    avedata = get(ax, ay, bx, by)
-    procedata = json2kml(avedata)
+    state = request.args.get('state', "None")
+    avedata = get(ax, ay, bx, by, state)
+    procedata = json2kml(avedata, state)
     enc = download(procedata)
     return enc
 
