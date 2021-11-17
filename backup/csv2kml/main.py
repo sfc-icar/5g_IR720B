@@ -1,6 +1,6 @@
 import csv
 
-data_place = "./csv/nana.csv"
+data_place = "./csv/70.csv"
 
 def locateformatter(locate):
     data = (locate[1] + "," + locate[0] + "," + locate[2])
@@ -49,7 +49,7 @@ def opencsv(data):
         return(list)
 
 def exportkml(data):
-    f = open('kml/export.kml', 'w')
+    f = open('kml/70.kml', 'w')
     f.write(data)
     f.close()
 
