@@ -29,13 +29,14 @@ def snrall():
 
 
 @app.route('/xyfind', methods=['GET'])
-def snrfind(ax=None, bx=None, ay=None, by=None, alt=None):
+def snrfind(ax=None, bx=None, ay=None, by=None, alt=None, height=None):
     ax = float(request.args.get('ax', 0))
     bx = float(request.args.get('bx', 1))
     ay = float(request.args.get('ay', 0))
     by = float(request.args.get('by', 1))
     alt = float(request.args.get('alt', 1))
-    a = [ax, bx, ay, by, alt, alt + 49]
+    height = float(request.args.get('height', 20))
+    a = [ax, bx, ay, by, alt, alt + height]
     conn = pymysql.connect(
         host='localhost',
         user='feles5g',

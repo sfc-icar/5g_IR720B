@@ -95,17 +95,18 @@ def download(procedata):
     return response
 
 
-def makeurl(ax, bx, ay, by, alt):
+def makeurl(ax, bx, ay, by, alt, height):
     url = "https://icar-svr.sfc.wide.ad.jp/vgrest/xyfind?ax=" + str(ax) + "&bx=" + str(bx) + "&ay=" + str(
-        ay) + "&by=" + str(by) + "&alt=" + str(alt)
+        ay) + "&by=" + str(by) + "&alt=" + str(alt) + "&height=" + str(height)
     return url
 
 
-def get(ax, ay, bx, by, state):
+def get(ax, ay, bx, by, height, state):
     ax = float(ax)
     ay = float(ay)
     bx = float(bx)
     by = float(by)
+    height = float(height)
     startx = ax
     starty = ay
     xlist = []
@@ -123,7 +124,7 @@ def get(ax, ay, bx, by, state):
     while alt < 150:
         for x in xlist:
             for y in ylist:
-                url = makeurl(x - width, x, y - width, y, alt)
+                url = makeurl(x - width, x, y - width, y, alt, height)
                 data = getdata(url, state)
                 if data:
                     oneavelist = [y - width, x - width, alt]
@@ -132,7 +133,7 @@ def get(ax, ay, bx, by, state):
                     oneavelist = []
             count += 1
             print(count)
-        alt += 50
+        alt += height
     print(avedata)
     return avedata
 
@@ -145,13 +146,14 @@ def test(state=None):
 
 
 @app.route('/ave', methods=['GET'])
-def makeave(ax=None, ay=None, bx=None, by=None, state=None):
+def makeave(ax=None, ay=None, bx=None, by=None, height=None, state=None):
     ax = request.args.get('ax', 0)
     ay = request.args.get('ay', 0)
     bx = request.args.get('bx', 1)
     by = request.args.get('by', 1)
+    height = request.args.get('height', 20)
     state = request.args.get('state', "None")
-    avedata = get(ax, ay, bx, by, state)
+    avedata = get(ax, ay, bx, by, height, state)
     procedata = json2kml(avedata, state)
     enc = download(procedata)
     return enc
@@ -159,5 +161,5 @@ def makeave(ax=None, ay=None, bx=None, by=None, state=None):
 
 if __name__ == "__main__":
     port = os.getenv("PORT")
-    #port = 5432
+    # port = 5432
     app.run(host="0.0.0.0", port=port)
