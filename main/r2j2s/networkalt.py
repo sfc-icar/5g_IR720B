@@ -88,9 +88,14 @@ def main():
     iperf_factory = Iperf3Factors()
     ping_factory.shaping_ping_data(data.ping_result)
     iperf_factory.shaping_iperf_data(data.iperf_result)
+    return ping_factory, iperf_factory
+
+
+def test(ping_factory, iperf_factory):
     ping_factory.print_test()
     iperf_factory.print_test()
 
 
 if __name__ == '__main__':
-    main()
+    ping_factory, iperf_factory = main()
+    test(ping_factory, iperf_factory)

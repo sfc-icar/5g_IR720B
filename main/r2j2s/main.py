@@ -35,16 +35,18 @@ keysa = ["alt"]
 keysr = ["Current", "RSSI", "ECIO", "IO", "SINR(8)", "RSRQ", "SNR", "RSRP"]
 keysi = ["s_pcid", "s_rc", "s_db", "s_lband",
          "s_State", "p_pcid", "p_rc", "p_db", "p_lband"]
-keysi = ["E-UTRA band 1: 2100","E-UTRA band 1: 900"]
-keys = keysg + keysa + keysr + keysi
+keysi = ["E-UTRA band 1: 2100", "E-UTRA band 1: 900"]
+keynw = ["ping-min", "ping-avg", "ping-max", "ping-stddev", "iperf-st", "iperf-sb", "iperf-rt", "iperf-rb"]
+keys = keysg + keysa + keysr + keysi + keynw
 value = []
 list_rows = [keys]
 lastflag = False
 # ----------------------------------------------------------
 
-deviceName = '/dev/ttyACM0'    # ls -l /dev/tty.*
+deviceName = '/dev/ttyACM0'  # ls -l /dev/tty.*
 baudrateNum = 115200
 timeoutNum = 3
+
 
 # ----------------------------------------------------------
 # GPSを取得　前の時間と違う値が出たら、routerの情報取得関数を実行
@@ -70,7 +72,7 @@ def gps():
                 cmd_result = ssh_cpca()
                 ssh2text_cpca(cmd_result)
 
-                cmd_result=ssh_cli()
+                cmd_result = ssh_cli()
                 ssh2text_cli(cmd_result)
 
                 list_rows.append(value)
@@ -84,7 +86,7 @@ def gps():
 
 
 # ----------------------------------------------------------
-#　三つ目のコマンド実行
+# 　三つ目のコマンド実行
 
 
 def ssh_cli():
@@ -99,8 +101,9 @@ def ssh_cli():
     del stdin, stdout, stderr
     return cmd_result
 
+
 # ----------------------------------------------------------
-#　三つ目のコマンドの結果を整形
+# 　三つ目のコマンドの結果を整形
 
 
 def ssh2text_cli(cmd_result_cli):
@@ -131,7 +134,6 @@ def ssh2text_cli(cmd_result_cli):
             lnum = fnum[0]
             SResultValue.append(lnum)
 
-
     def pc_info(ntext):
         global list_rows, pflag
         if "Cell [" in ntext:
@@ -156,7 +158,6 @@ def ssh2text_cli(cmd_result_cli):
             fnum = [float(n) for n in num]
             lnum = fnum[0]
             PResultValue.append(lnum)
-
 
     sflag = False
     pflag = False
@@ -188,7 +189,7 @@ def ssh2text_cli(cmd_result_cli):
 
 
 # ----------------------------------------------------------
-#　二つ目のコマンド実行
+# 　二つ目のコマンド実行
 
 
 def ssh_cpca():
@@ -203,8 +204,9 @@ def ssh_cpca():
     del stdin, stdout, stderr
     return cmd_result
 
+
 # ----------------------------------------------------------
-#　二つ目のコマンドの結果を整形
+# 　二つ目のコマンドの結果を整形
 
 
 def ssh2text_cpca(cmd_result_info):
@@ -281,7 +283,7 @@ def ssh2text_cpca(cmd_result_info):
 
 
 # ----------------------------------------------------------
-#　一つ目のコマンドを実行
+# 　一つ目のコマンドを実行
 def ssh_sist():
     global IP_ADDRESS, USER_NAME, PWD, CMD, client
 
@@ -296,7 +298,7 @@ def ssh_sist():
 
 
 # ----------------------------------------------------------
-#　一つ目のコマンドの結果を整形
+# 　一つ目のコマンドの結果を整形
 
 def ssh2text_sist(cmd_result):
     global value, list_rows, lastflag
@@ -347,8 +349,9 @@ def ssh2text_sist(cmd_result):
                 if key in ntext:
                     tflag = True
 
+
 # ----------------------------------------------------------
-#　CSVに書き出し
+# 　CSVに書き出し
 
 
 def makecsv():
@@ -366,8 +369,9 @@ def makecsv():
         else:
             writer.writerow(list_rows)
 
+
 # ----------------------------------------------------------
-#　sqlに送信
+# 　sqlに送信
 
 
 def sendsql():
@@ -384,8 +388,9 @@ def sendsql():
     except:
         pass
 
+
 # ----------------------------------------------------------
-#　routerにセッション作成
+# 　routerにセッション作成
 
 
 def makesession():
@@ -401,6 +406,7 @@ def makesession():
     client.close()
     del client
 
+
 # ----------------------------------------------------------
 
 
@@ -413,8 +419,7 @@ def main():
         sys.exit(0)
 
     # except:
-        # main()
+    # main()
 
 
 main()
-
