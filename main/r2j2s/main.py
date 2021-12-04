@@ -11,19 +11,18 @@ import paramiko
 import websocket
 from gps3 import gps3
 
+import networkalt as network
 import serialalt as alt
 
 # ----------------------------------------------------------
+# --nas-get-rf-band-info --nas-get-signal-strength --nas-get-lte-cphy-ca-info --nas-get-cell-location-info
 IP_ADDRESS = '192.168.1.1'
 USER_NAME = 'admin'
 PWD = "admin"
 CMD = 'sudo -S qmicli -d /dev/cdc-wdm1 --nas-get-signal-strength'
 CMD2 = 'sudo -S qmicli -d /dev/cdc-wdm1 --nas-get-lte-cphy-ca-info'
 CMD3 = 'sudo -S qmicli -d /dev/cdc-wdm1 --nas-get-cell-location-info'
-
 # ----------------------------------------------------------
-
-# --nas-get-rf-band-info --nas-get-signal-strength --nas-get-lte-cphy-ca-info --nas-get-cell-location-info
 
 gps_socket = gps3.GPSDSocket()
 data_stream = gps3.DataStream()
@@ -36,7 +35,7 @@ keysr = ["Current", "RSSI", "ECIO", "IO", "SINR(8)", "RSRQ", "SNR", "RSRP"]
 keysi = ["s_pcid", "s_rc", "s_db", "s_lband",
          "s_State", "p_pcid", "p_rc", "p_db", "p_lband"]
 keysi = ["E-UTRA band 1: 2100", "E-UTRA band 1: 900"]
-keynw = ["ping-min", "ping-avg", "ping-max", "ping-stddev", "iperf-st", "iperf-sb", "iperf-rt", "iperf-rb"]
+keynw = ["ping-min", "ping-avg", "ping-max", "ping-mdev", "iperf-st", "iperf-sb", "iperf-rt", "iperf-rb"]
 keys = keysg + keysa + keysr + keysi + keynw
 value = []
 list_rows = [keys]
@@ -50,7 +49,6 @@ timeoutNum = 3
 
 # ----------------------------------------------------------
 # GPSを取得　前の時間と違う値が出たら、routerの情報取得関数を実行
-
 
 def gps():
     global value, keys, list_rows, keysg
@@ -75,6 +73,9 @@ def gps():
                 cmd_result = ssh_cli()
                 ssh2text_cli(cmd_result)
 
+                ping_factory, iperf_factory = network.main()
+                append_network_data(ping_factory, iperf_factory)
+
                 list_rows.append(value)
 
                 makecsv()
@@ -83,6 +84,18 @@ def gps():
                 print(value)
 
                 value = []
+
+
+def append_network_data(ping_factory, iperf_factory):
+    global value
+    value.append(ping_factory.min)
+    value.append(ping_factory.avg)
+    value.append(ping_factory.max)
+    value.append(ping_factory.mdev)
+    value.append(iperf_factory.sender_transfer)
+    value.append(iperf_factory.sender_bitrate)
+    value.append(iperf_factory.receiver_transfer)
+    value.append(iperf_factory.receiver_bitrate)
 
 
 # ----------------------------------------------------------

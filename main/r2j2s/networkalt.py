@@ -3,8 +3,8 @@ import re
 import subprocess
 from subprocess import PIPE
 
-iperfcmd = "iperf3 -c 203.178.143.13 -t 5"
-pingcmd = "ping -c 5 203.178.143.13"
+iperfcmd = "iperf3 -c icar-svr.sfc.wide.ad.jp -t 5"
+pingcmd = "ping -c 5 icar-svr.sfc.wide.ad.jp"
 
 
 class NetworkQualityFactors:
@@ -37,12 +37,12 @@ class Iperf3Factors:
     def shaping_iperf_data(self, listtext):
         text = listtext[0]
         ntext = text.rstrip('\n')
-        sender_data = re.findall("sec  (.*)                  sender", ntext)
+        sender_data = re.findall("sec  (.*) sender", ntext)
         sender_transfer_data = re.findall("(.*) MBytes", sender_data[0])
         self.sender_transfer = sender_transfer_data[0]
         sender_bitrate_data = re.findall("MBytes  (.*) Mbits/sec", sender_data[0])
         self.sender_bitrate = sender_bitrate_data[0]
-        receiver_data = re.findall("sec  (.*)                  receiver", ntext)
+        receiver_data = re.findall("sec  (.*)receiver", ntext)
         receiver_transfer_data = re.findall("(.*) MBytes", receiver_data[0])
         self.receiver_transfer = receiver_transfer_data[0]
         receiver_bitrate_data = re.findall("MBytes  (.*) Mbits/sec", receiver_data[0])
@@ -61,24 +61,24 @@ class PingFactors:
         self.min = None
         self.avg = None
         self.max = None
-        self.stddev = None
+        self.mdev = None
 
     def shaping_ping_data(self, listtext):
         text = listtext[0]
         ntext = text.rstrip('\n')
-        list_data = re.findall("round-trip min/avg/max/stddev = (.*) ms", ntext)
+        list_data = re.findall("rtt min/avg/max/mdev = (.*) ms", ntext)
         split_data = list_data[0].split("/")
         self.min = split_data[0]
         self.avg = split_data[1]
         self.max = split_data[2]
-        self.stddev = split_data[3]
+        self.mdev = split_data[3]
 
     def print_test(self):
         print("ping data -------------------------")
         print("min:" + self.min)
         print("avg:" + self.avg)
         print("max:" + self.max)
-        print("stddev:" + self.stddev)
+        print("mdev:" + self.mdev)
 
 
 def main():
