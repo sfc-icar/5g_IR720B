@@ -34,12 +34,13 @@ keysa = ["alt"]
 keysr = ["Current", "RSSI", "ECIO", "IO", "SINR(8)", "RSRQ", "SNR", "RSRP"]
 keysi = ["s_pcid", "s_rc", "s_db", "s_lband",
          "s_State", "p_pcid", "p_rc", "p_db", "p_lband"]
-keysi = ["E-UTRA band 1: 2100", "E-UTRA band 1: 900"]
+keyso = ["E-UTRA band 1: 2100", "E-UTRA band 1: 900"]
 keynw = ["ping-min", "ping-avg", "ping-max", "ping-mdev", "iperf-st", "iperf-sb", "iperf-rt", "iperf-rb"]
-keys = keysg + keysa + keysr + keysi + keynw
+keys = keysg + keysa + keysr + keysi + keyso + keynw
 value = []
 list_rows = [keys]
 lastflag = False
+
 # ----------------------------------------------------------
 
 deviceName = '/dev/ttyACM0'  # ls -l /dev/tty.*
@@ -104,7 +105,6 @@ def append_network_data(ping_factory, iperf_factory):
 
 def ssh_cli():
     global IP_ADDRESS, USER_NAME, PWD, CMD3, client
-
     stdin, stdout, stderr = client.exec_command(CMD3)
     stdin.write('admin\n')
     stdin.flush()
@@ -399,6 +399,7 @@ def sendsql():
             ws.send(data)
             ws.close()
     except:
+        print("Can not send data")
         pass
 
 

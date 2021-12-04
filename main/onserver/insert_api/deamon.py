@@ -31,7 +31,7 @@ class Websocket_Server():
             if row[num] == "n/a":
                 row[num] = None
         with conn.cursor() as cursor:
-            sql = "INSERT INTO gndr_main(time, lat, lon, alt, Current, RSSI, ECIO, IO, SINR, RSRQ, SNR, RSRP, s_pcid, s_rc, s_db, s_lband, s_State, p_pcid, p_rc, p_db, p_lband, EUTRAband2100, EUTRAband900,ping-min, ping-avg, ping-max, ping-mdev, iperf-st, iperf-sb, iperf-rt, iperf-rb) VALUES ( % s, % s, % s, % s, % s, % s, % s, % s, % s, % s, % s, % s, % s, % s, % s, % s, % s, % s, % s, % s, % s, % s, % s, % s, % s, % s, % s, % s, % s, % s, % s);"
+            sql = "INSERT INTO gndr_main(time, lat, lon, alt, Current, RSSI, ECIO, IO, SINR, RSRQ, SNR, RSRP, s_pcid, s_rc, s_db, s_lband, s_State, p_pcid, p_rc, p_db, p_lband, EUTRAband2100, EUTRAband900,ping_min, ping_avg, ping_max, ping_mdev, iperf_st, iperf_sb, iperf_rt, iperf_rb) VALUES ( % s, % s, % s, % s, % s, % s, % s, % s, % s, % s, % s, % s, % s, % s, % s, % s, % s, % s, % s, % s, % s, % s, % s, % s, % s, % s, % s, % s, % s, % s, % s);"
             row22 = ",".join([str(_) for _ in row[22]])
             row21 = ",".join([str(_) for _ in row[21]])
             print(row21)

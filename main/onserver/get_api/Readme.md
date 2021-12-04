@@ -11,3 +11,4 @@ http://172.20.10.2:5000/snrave?ax=35.387958&ay=139.425070&bx=35.392375&by=139.42
 
 35.387958, 139.425070, 35.392375, 139.428492
 
+ALTER TABLE gndr_main ADD (ping_min FLOAT, ping_avg FLOAT, ping_max FLOAT, ping_mdev FLOAT, iperf_st FLOAT, iperf_sb FLOAT, iperf_rt FLOAT, iperf_rb FLOAT);
