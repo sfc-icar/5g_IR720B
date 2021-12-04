@@ -7,7 +7,7 @@ baudrateNum = 115200
 timeoutNum = 3
 calibration = "C"
 give = "G"
-
+#screen /dev/ttyACM0 115200
 
 def makesession():
     global writeSer, readSer
@@ -53,3 +53,8 @@ def askone():
 def close():
     writeSer.close()
     readSer.close()
+
+if __name__ == '__main__':
+    make()
+    print(askone())
+    close()
