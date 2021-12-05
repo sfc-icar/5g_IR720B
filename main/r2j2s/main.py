@@ -394,12 +394,13 @@ def sendsql():
         if __name__ == "__main__":
             websocket.enableTrace(False)
             ws = websocket.create_connection(
-                "ws://203.178.143.13:5111")
+                "wss://icar-svr.sfc.wide.ad.jp:5111")
             data = json.dumps(value)
             ws.send(data)
+            print("send data")
             ws.close()
-    except:
-        print("Can not send data")
+    except Exception as e:
+        print(e)
         pass
 
 

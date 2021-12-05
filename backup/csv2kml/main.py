@@ -1,6 +1,6 @@
 import csv
 
-data_place = "./csv/70.csv"
+data_place = "./csv/data.csv"
 
 def locateformatter(locate):
     data = (locate[1] + "," + locate[0] + "," + locate[2])
@@ -9,23 +9,28 @@ def locateformatter(locate):
 
 def snrformatter(SNR):
     try:
-        if SNR > 13:
-            color = "Red"
-        elif SNR > 12:
-            color = "Yellow"
-        else:
+        if SNR > 10:
+            color = "Blue"
+        elif SNR > 5:
             color = "Green"
+        elif SNR > 0:
+            color = "Yellow"
+        elif SNR > -5:
+            color = "Orange"
+        else:
+            color = "Red"
     finally:
         color = "<styleUrl>#"+color+"</styleUrl>"
         return color
 
 def csv2kml(list_data):
-    f = open('format.txt', 'r')
+    f = open('format_SNR.txt', 'r')
     front = f.read()
     f.close()
     meat = ""
     for list_value in list_data:
-        SNR = list_value[11]
+        print(list_value[10])
+        SNR = list_value[10]
         locatedata = [list_value[1],list_value[2],list_value[3]]
         if locatedata[0] == "lat":
             continue
@@ -49,7 +54,7 @@ def opencsv(data):
         return(list)
 
 def exportkml(data):
-    f = open('kml/70.kml', 'w')
+    f = open('kml/SNR.kml', 'w')
     f.write(data)
     f.close()
 

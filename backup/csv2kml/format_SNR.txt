@@ -62,3 +62,43 @@
 			<styleUrl>#Red_CascadingStyle</styleUrl>
 		</Pair>
 	</StyleMap>
+	<gx:CascadingStyle kml:id="Blue_CascadingStyle">
+		<Style>
+			<IconStyle>
+				<Icon>
+					<href>https://earth.google.com/earth/rpc/cc/icon?color=1976d2&amp;id=2000&amp;scale=4</href>
+				</Icon>
+				<hotSpot x="64" y="128" xunits="pixels" yunits="insetPixels"/>
+			</IconStyle>
+		</Style>
+	</gx:CascadingStyle>
+	<StyleMap id="Blue">
+		<Pair>
+			<key>normal</key>
+			<styleUrl>#Blue_CascadingStyle</styleUrl>
+		</Pair>
+		<Pair>
+			<key>highlight</key>
+			<styleUrl>#Blue_CascadingStyle</styleUrl>
+		</Pair>
+	</StyleMap>
+	<gx:CascadingStyle kml:id="Orange_CascadingStyle">
+		<Style>
+			<IconStyle>
+				<Icon>
+					<href>https://earth.google.com/earth/rpc/cc/icon?color=f57c00&amp;id=2000&amp;scale=4</href>
+				</Icon>
+				<hotSpot x="64" y="128" xunits="pixels" yunits="insetPixels"/>
+			</IconStyle>
+		</Style>
+	</gx:CascadingStyle>
+	<StyleMap id="Orange">
+		<Pair>
+			<key>normal</key>
+			<styleUrl>#Orange_CascadingStyle</styleUrl>
+		</Pair>
+		<Pair>
+			<key>highlight</key>
+			<styleUrl>#Orange_CascadingStyle</styleUrl>
+		</Pair>
+	</StyleMap>
