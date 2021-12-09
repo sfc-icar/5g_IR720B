@@ -1,0 +1,287 @@
+#!/usr/bin/env python3
+
+from __future__ import print_function
+
+import re
+
+# ----------------------------------------------------------
+# --nas-get-rf-band-info --nas-get-signal-strength --nas-get-lte-cphy-ca-info --nas-get-cell-location-info
+IP_ADDRESS = '192.168.1.1'
+USER_NAME = 'admin'
+PWD = "admin"
+CMD = 'sudo -S qmicli -d /dev/cdc-wdm1 --nas-get-signal-strength'
+CMD2 = 'sudo -S qmicli -d /dev/cdc-wdm1 --nas-get-lte-cphy-ca-info'
+CMD3 = 'sudo -S qmicli -d /dev/cdc-wdm1 --nas-get-cell-location-info'
+
+
+# ----------------------------------------------------------
+
+def makesession():
+    global IP_ADDRESS, USER_NAME, PWD, client
+    client = paramiko.SSHClient()
+    client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+    client.connect(IP_ADDRESS,
+                   username=USER_NAME,
+                   password=PWD,
+                   timeout=10.0)
+    alt.make()
+    gps()
+    client.close()
+    del client
+
+
+class CMD3:
+    def __init__(self):
+        self.IP_ADDRESS = '192.168.1.1'
+        self.USER_NAME = 'admin'
+        self.PWD = "admin"
+        self.CMD = 'sudo -S qmicli -d /dev/cdc-wdm1 --nas-get-cell-location-info'
+
+    def ssh_cli(self):
+        global IP_ADDRESS, USER_NAME, PWD, CMD3, client
+        stdin, stdout, stderr = client.exec_command(CMD3)
+        stdin.write('admin\n')
+        stdin.flush()
+        cmd_result = ''
+        for line in stdout:
+            cmd_result += line
+        del stdin, stdout, stderr
+        return cmd_result
+
+    def sc_info(self, ntext):
+        global list_rows
+        if "Cell [" in ntext:
+            SResultValue.append(ntext)
+        elif "Physical Cell ID" in ntext:
+            num = re.findall("Physical Cell ID: '(.*)'", ntext)
+            fnum = [float(n) for n in num]
+            lnum = fnum[0]
+            SResultValue.append(lnum)
+        elif "RSRQ" in ntext:
+            num = re.findall("RSRQ: '(.*)' dB", ntext)
+            fnum = [float(n) for n in num]
+            lnum = fnum[0]
+            SResultValue.append(lnum)
+        elif "RSRP" in ntext:
+            num = re.findall("RSRP: '(.*)' dBm", ntext)
+            fnum = [float(n) for n in num]
+            lnum = fnum[0]
+            SResultValue.append(lnum)
+        elif "RSSI" in ntext:
+            num = re.findall("RSSI: '(.*)' dBm", ntext)
+            fnum = [float(n) for n in num]
+            lnum = fnum[0]
+            SResultValue.append(lnum)
+
+    def pc_info(self, ntext):
+        global list_rows, pflag
+        if "Cell [" in ntext:
+            PResultValue.append(ntext)
+        elif "Physical Cell ID" in ntext:
+            num = re.findall("Physical Cell ID: '(.*)'", ntext)
+            fnum = [float(n) for n in num]
+            lnum = fnum[0]
+            PResultValue.append(lnum)
+        elif "RSRQ" in ntext:
+            num = re.findall("RSRQ: '(.*)' dB", ntext)
+            fnum = [float(n) for n in num]
+            lnum = fnum[0]
+            PResultValue.append(lnum)
+        elif "RSRP" in ntext:
+            num = re.findall("RSRP: '(.*)' dBm", ntext)
+            fnum = [float(n) for n in num]
+            lnum = fnum[0]
+            PResultValue.append(lnum)
+        elif "RSSI" in ntext:
+            num = re.findall("RSSI: '(.*)' dBm", ntext)
+            fnum = [float(n) for n in num]
+            lnum = fnum[0]
+            PResultValue.append(lnum)
+
+    def ssh2text_cli(self, cmd_result_cli):
+        sflag = False
+        pflag = False
+        PResultValue = []
+        SResultValue = []
+        f = cmd_result_cli.splitlines()
+        try:
+            for text in f:
+                ntext = text.rstrip('\n')
+                if "2100" in ntext:
+                    pflag = True
+                elif "900" in ntext:
+                    pflag = False
+                    sflag = True
+                if pflag:
+                    pc_info(ntext)
+                elif sflag:
+                    sc_info(ntext)
+                else:
+                    pass
+        except Exception as e:
+            import traceback
+            print("\nエラー情報:")
+            traceback.print_exc()
+            pass
+        finally:
+            value.append(PResultValue)
+            value.append(SResultValue)
+
+
+# ----------------------------------------------------------
+# 　二つ目のコマンド実行
+class CMD2:
+    def __init__(self):
+        self.IP_ADDRESS = '192.168.1.1'
+        self.USER_NAME = 'admin'
+        self.PWD = "admin"
+        self.CMD = 'sudo -S qmicli -d /dev/cdc-wdm1 --nas-get-lte-cphy-ca-info'
+
+    def ssh_cpca(self):
+        global IP_ADDRESS, USER_NAME, PWD, CMD2, client
+        stdin, stdout, stderr = client.exec_command(CMD2)
+        stdin.write('admin\n')
+        stdin.flush()
+        cmd_result = ''
+        for line in stdout:
+            cmd_result += line
+        del stdin, stdout, stderr
+        return cmd_result
+
+    def sc_info(self, ntext):
+        global value, list_rows, sflag
+        if "Physical Cell ID" in ntext:
+            num = re.findall("Physical Cell ID: '(.*)'", ntext)
+            fnum = [float(n) for n in num]
+            lnum = fnum[0]
+            value.append(lnum)
+        elif "RX Channel" in ntext:
+            num = re.findall("RX Channel: '(.*)'", ntext)
+            fnum = [float(n) for n in num]
+            lnum = fnum[0]
+            value.append(lnum)
+        elif "DL Bandwidth" in ntext:
+            num = re.findall("DL Bandwidth: '(.*)'", ntext)
+            fnum = [float(n) for n in num]
+            lnum = fnum[0]
+            value.append(lnum)
+        elif "LTE Band" in ntext:
+            num = re.findall("LTE Band: '(.*)'", ntext)
+            fnum = [str(n) for n in num]
+            lnum = fnum[0]
+            value.append(lnum)
+        elif "State" in ntext:
+            num = re.findall("State: '(.*)'", ntext)
+            fnum = [str(n) for n in num]
+            lnum = fnum[0]
+            value.append(lnum)
+            sflag = False
+
+    def pc_info(self, ntext):
+        global value, list_rows, pflag
+        if "Physical Cell ID" in ntext:
+            num = re.findall("Physical Cell ID: '(.*)'", ntext)
+            fnum = [float(n) for n in num]
+            lnum = fnum[0]
+            value.append(lnum)
+        elif "RX Channel" in ntext:
+            num = re.findall("RX Channel: '(.*)'", ntext)
+            fnum = [float(n) for n in num]
+            lnum = fnum[0]
+            value.append(lnum)
+        elif "DL Bandwidth" in ntext:
+            num = re.findall("DL Bandwidth: '(.*)'", ntext)
+            fnum = [float(n) for n in num]
+            lnum = fnum[0]
+            value.append(lnum)
+        elif "LTE Band" in ntext:
+            num = re.findall("LTE Band: '(.*)'", ntext)
+            fnum = [str(n) for n in num]
+            lnum = fnum[0]
+            value.append(lnum)
+            pflag = False
+
+    def ssh2text_cpca(self, cmd_result_info):
+        global value, list_rows
+        sflag = False
+        pflag = False
+        f = cmd_result_info.splitlines()
+        for text in f:
+            ntext = text.rstrip('\n')
+            if pflag:
+                pc_info(ntext)
+            elif sflag:
+                sc_info(ntext)
+            elif "Secondary Cell Info" in ntext:
+                sflag = True
+            elif "Primary Cell Info" in ntext:
+                pflag = True
+            else:
+                pass
+
+class CMD1:
+    def __init__(self):
+        self.IP_ADDRESS = '192.168.1.1'
+        self.USER_NAME = 'admin'
+        self.PWD = "admin"
+        self.CMD = 'sudo -S qmicli -d /dev/cdc-wdm1 --nas-get-signal-strength'
+
+    def ssh_sist():
+        global IP_ADDRESS, USER_NAME, PWD, CMD, client
+
+        stdin, stdout, stderr = client.exec_command(CMD)
+        stdin.write('admin\n')
+        stdin.flush()
+        cmd_result = ''
+        for line in stdout:
+            cmd_result += line
+        del stdin, stdout, stderr
+        return cmd_result
+
+    def apnd_sist(ntext):
+        global value, list_rows, lastflag
+        if lastflag:
+            num = re.findall("Network 'lte': '(.*) dBm", ntext)
+            fnum = [float(n) for n in num]
+            lnum = fnum[0]
+            value.append(lnum)
+            lastflag = False
+        elif "dBm" in ntext and "Network" in ntext:
+            num = re.findall("Network 'lte': '(.*) dBm", ntext)
+            fnum = [float(n) for n in num]
+            lnum = fnum[0]
+            value.append(lnum)
+        elif "dB" in ntext and "Network" in ntext:
+            num = re.findall("Network 'lte': '(.*) dB", ntext)
+            fnum = [float(n) for n in num]
+            lnum = fnum[0]
+            value.append(lnum)
+
+    def ssh2text_sist(cmd_result):
+        global value, list_rows, lastflag
+        tflag = False
+        f = cmd_result.splitlines()
+        for text in f:
+            ntext = text.rstrip('\n')
+            if tflag:
+                apnd_sist(ntext)
+                tflag = False
+            elif "ECIO" in ntext:
+                tflag = True
+            elif "IO" in ntext:
+                num = re.findall("IO: '(.*) dBm", ntext)
+                fnum = [float(n) for n in num]
+                lnum = fnum[0]
+                value.append(lnum)
+            elif "SINR (8)" in ntext:
+                num = re.findall(": '(.*) dB", ntext)
+                fnum = [float(n) for n in num]
+                lnum = fnum[0]
+                value.append(lnum)
+            elif "RSRP" in ntext:
+                tflag = True
+                lastflag = True
+            else:
+                for key in keysr:
+                    if key in ntext:
+                        tflag = True
