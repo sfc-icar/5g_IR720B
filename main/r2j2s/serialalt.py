@@ -55,6 +55,6 @@ def close():
     readSer.close()
 
 if __name__ == '__main__':
-    make()
+    make(
     print(askone())
     close()
