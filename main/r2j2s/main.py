@@ -22,7 +22,7 @@ key_gps = ["time", "lat", "lon"]
 key_alt = ["alt"]
 key_lte = ["MCC", "MNC", "CELL_ID", "earfcn_dl", "earfcn_ul", "RSRP", "RSRQ", "SINR", "LTE RRC", "csq", "cgreg"]
 key_net = ["ping-min", "ping-avg", "ping-max", "ping-mdev", "iperf-st", "iperf-sb", "iperf-rt", "iperf-rb"]
-keys = key_gps + key_alt + key_lte + key_net
+keys = key_gps + key_alt + key_lte
 value = []
 list_rows = [keys]
 lastflag = False
@@ -53,13 +53,13 @@ def gps():
 
                 value = value + lte_ser.get_new_data()
 
-                ping_factory, iperf_factory = network.main()
-                append_network_data(ping_factory, iperf_factory)
+                # ping_factory, iperf_factory = network.main()
+                # append_network_data(ping_factory, iperf_factory)
 
                 list_rows.append(value)
 
                 makecsv()
-                sendsql()
+                # sendsql()
 
                 print(value)
 
