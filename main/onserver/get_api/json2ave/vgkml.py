@@ -41,13 +41,15 @@ def json2kml(list_data, state):
         f = open('format_SNR.txt', 'r')
     elif state == "RSRP":
         f = open('format_RSRP.txt', 'r')
+    else:
+        pass
     front = f.read()
     f.close()
     meat = ""
     last = "</Document>\n</kml>\n"
     # ====================================================#
     for list_value in list_data:
-        if list_value[0] == None or list_value[1] == None or list_value[2] == None or list_value[3] == None:
+        if list_value[0] is None or list_value[1] is None or list_value[2] is None or list_value[3] is None:
             continue
         locatedata = [list_value[0], list_value[1], list_value[2]]
         SNR = list_value[3]

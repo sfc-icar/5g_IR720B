@@ -37,15 +37,15 @@ class Iperf3Factors:
     def shaping_iperf_data(self, listtext):
         text = listtext[0]
         ntext = text.rstrip('\n')
-        sender_data = re.findall("sec  (.*) sender", ntext)
+        sender_data = re.findall("sec {2}(.*) sender", ntext)
         sender_transfer_data = re.findall("(.*) MBytes", sender_data[0])
         self.sender_transfer = sender_transfer_data[0]
-        sender_bitrate_data = re.findall("MBytes  (.*) Mbits/sec", sender_data[0])
+        sender_bitrate_data = re.findall("MBytes {2}(.*) Mbits/sec", sender_data[0])
         self.sender_bitrate = sender_bitrate_data[0]
-        receiver_data = re.findall("sec  (.*)receiver", ntext)
+        receiver_data = re.findall("sec {2}(.*)receiver", ntext)
         receiver_transfer_data = re.findall("(.*) MBytes", receiver_data[0])
         self.receiver_transfer = receiver_transfer_data[0]
-        receiver_bitrate_data = re.findall("MBytes  (.*) Mbits/sec", receiver_data[0])
+        receiver_bitrate_data = re.findall("MBytes {2}(.*) Mbits/sec", receiver_data[0])
         self.receiver_bitrate = receiver_bitrate_data[0]
 
     def print_test(self):
