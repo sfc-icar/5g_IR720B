@@ -175,6 +175,7 @@ def print_data(data_list):
     print("cgreg---------------------------")
     print(data_list["cgreg"].cgreg)
 
+
 def get_new_data():
     data_list = {"cell_info": CellInfo(), "csq": Csq(), "cgreg": Cgreg()}
     if test():
