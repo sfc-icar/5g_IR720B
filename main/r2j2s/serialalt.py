@@ -38,7 +38,7 @@ def alt():
     altitude1 = str(int.from_bytes(altitude1, 'big'))
     altitude2 = str(int.from_bytes(altitude2, 'big'))
     altitude = int(altitude1+altitude2)
-    return(altitude)
+    return altitude
 
 
 def make():
@@ -47,7 +47,7 @@ def make():
 
 
 def askone():
-    return(alt())
+    return alt()
 
 
 def close():

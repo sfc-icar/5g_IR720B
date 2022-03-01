@@ -1,6 +1,6 @@
 import csv
 
-data_place = "./csv/data.csv"
+data_place = "./csv/all.csv"
 
 def locateformatter(locate):
     data = (locate[1] + "," + locate[0] + "," + locate[2])
@@ -29,8 +29,8 @@ def csv2kml(list_data):
     f.close()
     meat = ""
     for list_value in list_data:
-        print(list_value[10])
-        SNR = list_value[10]
+        print(list_value[11])
+        SNR = list_value[11]
         locatedata = [list_value[1],list_value[2],list_value[3]]
         if locatedata[0] == "lat":
             continue
