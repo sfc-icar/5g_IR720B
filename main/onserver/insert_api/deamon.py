@@ -8,7 +8,7 @@ import time
 import json
 
 
-class Websocket_Server():
+class Websocket_Server:
 
     def __init__(self, host, port):
         self.server = WebsocketServer(port, host=host)

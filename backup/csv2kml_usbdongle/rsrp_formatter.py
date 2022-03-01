@@ -51,7 +51,7 @@ def opencsv(data):
     with open(data) as f:
         reader = csv.reader(f)
         list = [row for row in reader]
-        return(list)
+        return list
 
 def exportkml(data):
     f = open('kml/RSRP.kml', 'w')
