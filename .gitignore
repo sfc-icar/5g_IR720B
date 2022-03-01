@@ -1,3 +1,6 @@
-./.vscode
-./.ipynb_checkpoints
-./.DS_Store
+.vscode
+.ipynb_checkpoints
+.DS_Store
+backup/.DS_Store
+main/.DS_Store
+main/r2j2s/.DS_Store
