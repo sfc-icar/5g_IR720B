@@ -86,9 +86,9 @@ def makecsv():
     global list_rows
     args = sys.argv
     try:
-        csvname = args[1] + ".csv"
+        csvname = "./data/" + args[1] + ".csv"
     except:
-        csvname = "all.csv"
+        csvname = "./data/all.csv"
 
     with open(csvname, "w") as f:
         writer = csv.writer(f, lineterminator='\n')
