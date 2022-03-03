@@ -21,7 +21,6 @@ gps_socket.watch()
 key_gps = ["time", "lat", "lon"]
 key_alt = ["alt"]
 key_lte = ["MCC", "MNC", "CELL_ID", "earfcn_dl", "earfcn_ul", "RSRP", "RSRQ", "SINR", "LTE RRC", "csq", "cgreg"]
-key_net = ["ping-min", "ping-avg", "ping-max", "ping-mdev", "iperf-st", "iperf-sb", "iperf-rt", "iperf-rb"]
 keys = key_gps + key_alt + key_lte
 value = []
 list_rows = [keys]
@@ -59,7 +58,7 @@ def gps():
                 list_rows.append(value)
 
                 makecsv()
-                # sendsql()
+                sendsql()
 
                 print(value)
 
@@ -104,7 +103,6 @@ def makecsv():
 
 def sendsql():
     global value
-
     try:
         if __name__ == "__main__":
             websocket.enableTrace(False)
