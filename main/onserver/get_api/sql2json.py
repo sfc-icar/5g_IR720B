@@ -21,7 +21,7 @@ def snrall():
         password='local5g',
         cursorclass=pymysql.cursors.DictCursor)
     with conn.cursor() as cursor:
-        sql = "SELECT lat,lon,alt,SNR,RSRP FROM gndr_main"
+        sql = "SELECT lat,lon,alt,SINR,RSRP FROM vg_usb_main"
         cursor.execute(sql)
         result = cursor.fetchall()
     enc = json.dumps(result)
@@ -45,7 +45,7 @@ def snrfind(ax=None, bx=None, ay=None, by=None, alt=None, height=None):
         password='local5g',
         cursorclass=pymysql.cursors.DictCursor)
     with conn.cursor() as cursor:
-        sql = "SELECT lat,lon,alt,SNR,RSRP FROM gndr_main where %s < lat and lat < %s and %s < lon and lon < %s and %s <= alt and alt <= %s;"
+        sql = "SELECT lat,lon,alt,SINR,RSRP FROM vg_usb_main where %s < lat and lat < %s and %s < lon and lon < %s and %s <= alt and alt <= %s;"
         cursor.execute(sql, (a[0], a[1], a[2], a[3], a[4], a[5]))
         result = cursor.fetchall()
     enc = json.dumps(result)
@@ -61,7 +61,7 @@ def one():
             password='local5g',
             cursorclass=pymysql.cursors.DictCursor)
     with conn.cursor() as cursor:
-        sql = "SELECT * FROM gndr_main order by time desc limit 1"
+        sql = "SELECT * FROM vg_usb_main order by time desc limit 1"
         cursor.execute(sql)
         result = cursor.fetchall()
     enc = json.dumps(result[0])
