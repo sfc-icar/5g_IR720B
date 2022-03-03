@@ -6,7 +6,8 @@ import csv
 import json
 import sys
 
-import websocket
+import asyncio
+import websockets
 from gps3 import gps3
 
 import lte_serial as lte_ser
@@ -21,7 +22,6 @@ gps_socket.watch()
 key_gps = ["time", "lat", "lon"]
 key_alt = ["alt"]
 key_lte = ["MCC", "MNC", "CELL_ID", "earfcn_dl", "earfcn_ul", "RSRP", "RSRQ", "SINR", "LTE RRC", "csq", "cgreg"]
-key_net = ["ping-min", "ping-avg", "ping-max", "ping-mdev", "iperf-st", "iperf-sb", "iperf-rt", "iperf-rb"]
 keys = key_gps + key_alt + key_lte
 value = []
 list_rows = [keys]
@@ -59,7 +59,7 @@ def gps():
                 list_rows.append(value)
 
                 makecsv()
-                # sendsql()
+                asyncio.run(sendsql())
 
                 print(value)
 
@@ -102,18 +102,13 @@ def makecsv():
 # 　sqlに送信
 
 
-def sendsql():
+async def sendsql():
     global value
-
     try:
-        if __name__ == "__main__":
-            websocket.enableTrace(False)
-            ws = websocket.create_connection(
-                "wss://icar-svr.sfc.wide.ad.jp:5111")
+        uri = "ws://icar-svr.sfc.wide.ad.jp:5111"
+        async with websockets.connect(uri) as websocket:
             data = json.dumps(value)
-            ws.send(data)
-            print("send data")
-            ws.close()
+            await websocket.send(data)
     except Exception as e:
         print(e)
         pass
