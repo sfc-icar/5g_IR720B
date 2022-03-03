@@ -53,7 +53,7 @@ class CellInfo:
     def change_to_class_data(self, ntext):
         if "MCC" in ntext:
             mmc = re.findall(r'\d+', ntext)
-            mmc_list = [str(n) for n in mmc]
+            mmc_list = [int(n) for n in mmc]
             self.mmc = mmc_list[0]
             self.mnc = mmc_list[1]
         elif "CELL_ID" in ntext:
