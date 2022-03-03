@@ -6,7 +6,8 @@ import csv
 import json
 import sys
 
-import websocket
+import asyncio
+import websockets
 from gps3 import gps3
 
 import lte_serial as lte_ser
@@ -58,7 +59,7 @@ def gps():
                 list_rows.append(value)
 
                 makecsv()
-                sendsql()
+                asyncio.run(sendsql())
 
                 print(value)
 
@@ -101,17 +102,13 @@ def makecsv():
 # 　sqlに送信
 
 
-def sendsql():
+async def sendsql():
     global value
     try:
-        if __name__ == "__main__":
-            websocket.enableTrace(False)
-            ws = websocket.create_connection(
-                "wss://icar-svr.sfc.wide.ad.jp:5111")
+        uri = "ws://icar-svr.sfc.wide.ad.jp:5111"
+        async with websockets.connect(uri) as websocket:
             data = json.dumps(value)
-            ws.send(data)
-            print("send data")
-            ws.close()
+            await websocket.send(data)
     except Exception as e:
         print(e)
         pass
