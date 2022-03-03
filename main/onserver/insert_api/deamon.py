@@ -1,11 +1,10 @@
 #!/usr/bin/env python3
 
-from websocket_server import WebsocketServer
-import logging
-import pymysql.cursors
-import csv
-import time
 import json
+import time
+
+import pymysql.cursors
+from websocket_server import WebsocketServer
 
 
 class Websocket_Server:
@@ -31,12 +30,9 @@ class Websocket_Server:
             if row[num] == "n/a":
                 row[num] = None
         with conn.cursor() as cursor:
-            sql = "INSERT INTO gndr_main(time, lat, lon, alt, Current, RSSI, ECIO, IO, SINR, RSRQ, SNR, RSRP, s_pcid, s_rc, s_db, s_lband, s_State, p_pcid, p_rc, p_db, p_lband, EUTRAband2100, EUTRAband900,ping_min, ping_avg, ping_max, ping_mdev, iperf_st, iperf_sb, iperf_rt, iperf_rb) VALUES ( % s, % s, % s, % s, % s, % s, % s, % s, % s, % s, % s, % s, % s, % s, % s, % s, % s, % s, % s, % s, % s, % s, % s, % s, % s, % s, % s, % s, % s, % s, % s);"
-            row22 = ",".join([str(_) for _ in row[22]])
-            row21 = ",".join([str(_) for _ in row[21]])
-            print(row21)
+            sql = "INSERT INTO vg_usb_main(time, lat, lon, alt, MMC, MNC, cell_id, earfcn_dl, earfcn_ul, RSRP, RSRQ, SINR, LTE_RRC, csq, cgreg) VALUES ( % s, % s, % s, % s, % s, % s, % s, % s, % s, % s, % s, % s, % s, % s, % s);"
             cursor.execute(sql, (row[0], row[1], row[2], row[3], row[4], row[5],
-                           row[6], row[7], row[8], row[9], row[10], row[11], row[12], row[13], row[14], row[15], row[16], row[17], row[18], row[19], row[20], row[21], row[22], row[23], row[24], row[25], row[26], row[27], row[28], row[29], row[30]))
+                                 row[6], row[7], row[8], row[9], row[10], row[11], row[12], row[13], row[14]))
         conn.commit()
         conn.close()
 
