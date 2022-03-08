@@ -1,12 +1,11 @@
 #!/usr/bin/env python3
 
-import json
-import time
-
-import pymysql.cursors
-
 import asyncio
+import json
+import pymysql.cursors
+import time
 import websockets
+
 
 async def echo(websocket):
     async for message in websocket:
@@ -23,15 +22,21 @@ async def echo(websocket):
             if row[num] == "n/a":
                 row[num] = None
         with conn.cursor() as cursor:
-            sql = "INSERT INTO vg_usb_main(time, lat, lon, alt, MMC, MNC, cell_id, earfcn_dl, earfcn_ul, RSRP, RSRQ, SINR, LTE_RRC, csq, cgreg) VALUES ( % s, % s, % s, % s, % s, % s, % s, % s, % s, % s, % s, % s, % s, % s, % s);"
-            cursor.execute(sql, (row[0], row[1], row[2], row[3], row[4], row[5],
-                                 row[6], row[7], row[8], row[9], row[10], row[11], row[12], row[13], row[14]))
+            sql = (
+                "INSERT INTO vg_usb_main(time, lat, lon, alt, MMC, MNC, cell_id, earfcn_dl, earfcn_ul, RSRP, RSRQ, SINR, LTE_RRC, csq) "
+                "VALUES ( % s, % s, % s, % s, % s, % s, % s, % s, % s, % s, % s, % s, % s, % s);"
+            )
+            row_data = (row[0], row[1], row[2], row[3], row[4], row[5],
+                        row[6], row[7], row[8], row[9], row[10], row[11], row[12], row[13])
+            cursor.execute(sql, row_data)
         conn.commit()
         conn.close()
+
 
 async def main():
     async with websockets.serve(echo, "203.178.143.13", 5111):
         await asyncio.Future()  # run forever
+
 
 asyncio.run(main())
 
