@@ -24,7 +24,7 @@ async def echo(websocket):
                 row[num] = None
         with conn.cursor() as cursor:
             sql = "INSERT INTO vg_usb_main(time, lat, lon, alt, MMC, MNC, cell_id, earfcn_dl, earfcn_ul, RSRP, RSRQ, SINR, LTE_RRC, csq, cgreg) VALUES ( % s, % s, % s, % s, % s, % s, % s, % s, % s, % s, % s, % s, % s, % s, % s);"
-            cursor.execute(sql, (row[0], row[1], row[2], row[3], row[4], row[5],
+            cursor.executemany(sql, (row[0], row[1], row[2], row[3], row[4], row[5],
                                  row[6], row[7], row[8], row[9], row[10], row[11], row[12], row[13], row[14]))
         conn.commit()
         conn.close()
