@@ -2,17 +2,14 @@
 
 from __future__ import print_function
 
+import asyncio
 import csv
 import json
+import lte_serial as lte_ser
+import serialalt as alt
 import sys
-
-import asyncio
 import websockets
 from gps3 import gps3
-
-import lte_serial as lte_ser
-import networkalt as network
-import serialalt as alt
 
 gps_socket = gps3.GPSDSocket()
 data_stream = gps3.DataStream()
@@ -53,9 +50,6 @@ def gps():
 
                 value = value + lte_ser.get_new_data()
 
-                # ping_factory, iperf_factory = network.main()
-                # append_network_data(ping_factory, iperf_factory)
-
                 list_rows.append(value)
 
                 makecsv()
@@ -64,19 +58,6 @@ def gps():
                 print(value)
 
                 value = []
-
-
-def append_network_data(ping_factory, iperf_factory):
-    global value
-    value.append(ping_factory.min)
-    value.append(ping_factory.avg)
-    value.append(ping_factory.max)
-    value.append(ping_factory.mdev)
-    value.append(iperf_factory.sender_transfer)
-    value.append(iperf_factory.sender_bitrate)
-    value.append(iperf_factory.receiver_transfer)
-    value.append(iperf_factory.receiver_bitrate)
-
 
 # ----------------------------------------------------------
 # 　CSVに書き出し
