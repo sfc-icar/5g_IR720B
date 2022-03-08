@@ -1,7 +1,7 @@
 import re
 import serial
 
-ser = serial.Serial('/dev/ttyUSB2', 115200, timeout=0.1)
+ser = serial.Serial('/dev/ttyUSB2', 115200, timeout=0.4)
 cmd_check = "AT\r"
 cmd_cell_info = "AT+cellinfolist\r"
 cmd_csq = "AT+csq\r"
