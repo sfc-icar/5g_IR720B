@@ -41,15 +41,10 @@ def gps():
         if new_data:
             data_stream.unpack(new_data)
             if data_stream.TPV["time"] != old_data:
-                for key in key_gps:
-                    data_stream.unpack(new_data)
-                    value.append(data_stream.TPV[key])
+                data_stream.unpack(new_data)
+                value = [data_stream.TPV["time"], data_stream.TPV["lat"], data_stream.TPV["lon"],
+                         alt.askone()] + lte_ser.get_new_data()
                 old_data = data_stream.TPV["time"]
-
-                value.append(alt.askone())
-
-                value = value + lte_ser.get_new_data()
-
                 list_rows.append(value)
 
                 makecsv()
@@ -58,6 +53,7 @@ def gps():
                 print(value)
 
                 value = []
+
 
 # ----------------------------------------------------------
 # 　CSVに書き出し
@@ -106,9 +102,6 @@ def main():
     except KeyboardInterrupt:
         alt.close()
         sys.exit(0)
-
-    # except:
-    # main()
 
 
 main()
