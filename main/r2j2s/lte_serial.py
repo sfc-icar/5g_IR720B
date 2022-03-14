@@ -112,7 +112,7 @@ class Csq:
         if "csq:" in ntext:
             csq = re.findall(r'\d+', ntext)
             csq_list = [int(n) for n in csq]
-            self.csq = csq_list[1]
+            self.csq = csq_list[0]
 
 
 class Cgreg:
