@@ -1,4 +1,4 @@
-# IR270Bを用いた実験用
+# 電測用
 
 
 ICAR-SVR上で動かすもの(systemctl status vggps)  
