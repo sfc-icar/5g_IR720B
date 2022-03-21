@@ -39,6 +39,8 @@ def csv2kml(list_data):
 
         if RSRP == "RSRP":
             continue
+        elif RSRP == "":
+            continue
         else:
             color = rsrpformatter(float(RSRP))
         data = "<Placemark>\n%s\n<Point>\n<altitudeMode>relativeToGround</altitudeMode>\n%s\n</Point>\n</Placemark>\n" % (color,latlondata)

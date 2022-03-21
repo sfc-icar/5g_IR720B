@@ -39,6 +39,8 @@ def csv2kml(list_data):
 
         if SNR == "SNR":
             continue
+        elif SNR == "":
+            continue
         else:
             color = snrformatter(float(SNR))
         data = "<Placemark>\n%s\n<Point>\n<altitudeMode>relativeToGround</altitudeMode>\n%s\n</Point>\n</Placemark>\n" % (color,latlondata)
