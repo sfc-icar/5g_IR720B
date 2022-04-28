@@ -1,13 +1,13 @@
 #!/usr/bin/env python3
 
-from __future__ import print_function
-
-import asyncio
+# import asyncio
 import csv
 import json
-import lte_serial as lte_ser
-import serialalt as alt
 import sys
+
+import lte_serial as lte_ser
+import networkalt as network
+import serialalt as alt
 import websockets
 from gps3 import gps3
 
@@ -19,10 +19,10 @@ gps_socket.watch()
 key_gps = ["time", "lat", "lon"]
 key_alt = ["alt"]
 key_lte = ["MCC", "MNC", "CELL_ID", "earfcn_dl", "earfcn_ul", "RSRP", "RSRQ", "SINR", "LTE RRC", "csq", "cgreg"]
-keys = key_gps + key_alt + key_lte
+key_net = ["up", "down", "png"]
+keys = key_gps + key_alt + key_lte + key_net
 value = []
 list_rows = [keys]
-lastflag = False
 
 # ----------------------------------------------------------
 
@@ -40,34 +40,38 @@ def gps():
     for new_data in gps_socket:
         if new_data:
             data_stream.unpack(new_data)
-            if data_stream.TPV["time"] != old_data:
-                data_stream.unpack(new_data)
-                value = [data_stream.TPV["time"], data_stream.TPV["lat"], data_stream.TPV["lon"],
-                         alt.askone()] + lte_ser.get_new_data()
-                old_data = data_stream.TPV["time"]
-                list_rows.append(value)
+        if data_stream.TPV["time"] != old_data:
+            data_stream.unpack(new_data)
+            make_data()
+            old_data = data_stream.TPV["time"]
 
-                makecsv()
-                asyncio.run(sendsql())
 
-                print(value)
-
-                value = []
+def make_data():
+    global value
+    iperf_down_factory, iperf_up_factory, ping_factory = network.main()
+    network_list_data = [iperf_down_factory.sender_transfer, iperf_up_factory.sender_transfer, ping_factory.avg]
+    value = [data_stream.TPV["time"], data_stream.TPV["lat"], data_stream.TPV["lon"],
+             alt.askone()] + lte_ser.get_new_data() + network_list_data
+    list_rows.append(value)
+    make_csv()
+    # asyncio.run(send_sql())
+    print(value)
+    value = []
 
 
 # ----------------------------------------------------------
 # 　CSVに書き出し
 
 
-def makecsv():
+def make_csv():
     global list_rows
     args = sys.argv
-    try:
-        csvname = "./data/" + args[1] + ".csv"
-    except:
-        csvname = "./data/all.csv"
+    if len(sys.argv) == 1:
+        csv_name = "./data/" + args[1] + ".csv"
+    else:
+        csv_name = "./data/all.csv"
 
-    with open(csvname, "w") as f:
+    with open(csv_name, "w") as f:
         writer = csv.writer(f, lineterminator='\n')
         if isinstance(list_rows[0], list):
             writer.writerows(list_rows)
@@ -79,7 +83,7 @@ def makecsv():
 # 　sqlに送信
 
 
-async def sendsql():
+async def send_sql():
     global value
     try:
         uri = "ws://icar-svr.sfc.wide.ad.jp:5111"

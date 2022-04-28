@@ -3,23 +3,28 @@ import re
 import subprocess
 from subprocess import PIPE
 
-iperfcmd = "iperf3 -c icar-svr.sfc.wide.ad.jp -t 5"
-pingcmd = "ping -c 5 icar-svr.sfc.wide.ad.jp"
+iperf_cmd_up = "iperf3 -c 203.178.143.13 -t 1 --port 50002"
+iperf_cmd_down = "iperf3 -c 203.178.143.13 -t 1 -R --port 50001"
+ping_cmd = "ping -c 1 icar-svr.sfc.wide.ad.jp"
 
 
 class NetworkQualityFactors:
     def __init__(self):
-        self.iperf_data = None
+        self.iperf_data_down = None
+        self.iperf_data_up = None
         self.ping_data = None
-        self.iperf_result = None
+        self.iperf_result_down = None
+        self.iperf_result_up = None
         self.ping_result = None
 
     def set_data(self):
-        self.iperf_data = subprocess.Popen(iperfcmd, shell=True, stdout=PIPE, stderr=PIPE, text=True)
-        self.ping_data = subprocess.Popen(pingcmd, shell=True, stdout=PIPE, stderr=PIPE, text=True)
+        self.iperf_data_up = subprocess.Popen(iperf_cmd_up, shell=True, stdout=PIPE, stderr=PIPE, text=True)
+        self.iperf_data_down = subprocess.Popen(iperf_cmd_down, shell=True, stdout=PIPE, stderr=PIPE, text=True)
+        self.ping_data = subprocess.Popen(ping_cmd, shell=True, stdout=PIPE, stderr=PIPE, text=True)
 
     def get_data(self):
-        self.iperf_result = self.iperf_data.communicate()
+        self.iperf_result_down = self.iperf_data_down.communicate()
+        self.iperf_result_up = self.iperf_data_up.communicate()
         self.ping_result = self.ping_data.communicate()
 
     def make(self):
@@ -27,7 +32,7 @@ class NetworkQualityFactors:
         self.get_data()
 
 
-class Iperf3Factors:
+class Iperf3UpFactors:
     def __init__(self):
         self.sender_transfer = None
         self.sender_bitrate = None
@@ -37,6 +42,36 @@ class Iperf3Factors:
     def shaping_iperf_data(self, listtext):
         text = listtext[0]
         ntext = text.rstrip('\n')
+        sender_data = re.findall("sec {2}(.*) sender", ntext)
+        sender_transfer_data = re.findall("(.*) MBytes", sender_data[0])
+        self.sender_transfer = sender_transfer_data[0]
+        sender_bitrate_data = re.findall("MBytes {2}(.*) Mbits/sec", sender_data[0])
+        self.sender_bitrate = sender_bitrate_data[0]
+        receiver_data = re.findall("sec {2}(.*)receiver", ntext)
+        receiver_transfer_data = re.findall("(.*) MBytes", receiver_data[0])
+        self.receiver_transfer = receiver_transfer_data[0]
+        receiver_bitrate_data = re.findall("MBytes {2}(.*) Mbits/sec", receiver_data[0])
+        self.receiver_bitrate = receiver_bitrate_data[0]
+
+    def print_test(self):
+        print("ping iperf -------------------------")
+        print("sender_transfer:" + self.sender_transfer + "MBytes")
+        print("sender_bitrate:" + self.sender_bitrate + "Mbits/sec")
+        print("receiver_transfer:" + self.receiver_transfer + "MBytes")
+        print("receiver_bitrate:" + self.receiver_bitrate + "Mbits/sec")
+
+
+class Iperf3DownFactors:
+    def __init__(self):
+        self.sender_transfer = None
+        self.sender_bitrate = None
+        self.receiver_transfer = None
+        self.receiver_bitrate = None
+
+    def shaping_iperf_data(self, listtext):
+        text = listtext[0]
+        ntext = text.rstrip('\n')
+        print(ntext)
         sender_data = re.findall("sec {2}(.*) sender", ntext)
         sender_transfer_data = re.findall("(.*) MBytes", sender_data[0])
         self.sender_transfer = sender_transfer_data[0]
@@ -84,18 +119,25 @@ class PingFactors:
 def main():
     data = NetworkQualityFactors()
     data.make()
+
     ping_factory = PingFactors()
-    iperf_factory = Iperf3Factors()
+    iperf_down_factory = Iperf3DownFactors()
+    iperf_up_factory = Iperf3UpFactors()
+
     ping_factory.shaping_ping_data(data.ping_result)
-    iperf_factory.shaping_iperf_data(data.iperf_result)
-    return ping_factory, iperf_factory
+    iperf_down_factory.shaping_iperf_data(data.iperf_result_down)
+    iperf_up_factory.shaping_iperf_data(data.iperf_result_up)
+
+    list_data = [iperf_down_factory, iperf_up_factory.sender_transfer, ping_factory.avg]
+    return list_data
 
 
-def test(ping_factory, iperf_factory):
+def test(iperf_down_factory, iperf_up_factory, ping_factory):
+    iperf_down_factory.print_test()
+    iperf_up_factory.print_test()
     ping_factory.print_test()
-    iperf_factory.print_test()
 
 
 if __name__ == '__main__':
-    ping_factory, iperf_factory = main()
-    test(ping_factory, iperf_factory)
+    iperf_down_factory, iperf_up_factory, ping_factory = main()
+    test(iperf_down_factory, iperf_up_factory, ping_factory)
